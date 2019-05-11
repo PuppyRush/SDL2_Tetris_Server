@@ -12,7 +12,7 @@
 #include <vector>
 #include <algorithm>
 
-#include "GameInterface/src/SubScription/Subject.h"
+#include "GameInterface/include/Subject.h"
 #include "GameInterface/include/Object.h"
 #include "Observer.h"
 

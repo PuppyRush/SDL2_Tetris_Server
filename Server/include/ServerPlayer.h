@@ -27,7 +27,7 @@ public:
     inline virtual const std::string_view& getUniqueName() const override final
     { return game_interface::NAME_PLAYER; }
 
-    virtual void updateObserver(const game_interface::Packet&) override final;
+    virtual void updateObserver(const game_interface::packet::Packet&) override final;
 
     virtual Json::Value toJson() const override final;
 
@@ -37,11 +37,11 @@ public:
 
     void disconnection();
 
-    void sendPacket(const game_interface::Packet&) const;
+    void sendPacket(const game_interface::packet::Packet&) const override final;
 
     void sendUniqueInfo();
 
-    void recvInitInfo(const game_interface::Packet packet);
+    void recvInitInfo(const game_interface::packet::Packet packet);
 
     std::shared_ptr<PlayerService> m_service = nullptr;
 

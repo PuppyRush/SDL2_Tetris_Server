@@ -5,8 +5,9 @@
 #include "GameInterface/include/ManagerController.h"
 
 using namespace game_interface;
+using namespace game_interface::packet;
 
-void ManagerController::updateObserver(const game_interface::Packet& packet)
+void ManagerController::updateObserver(const Packet& packet)
 {
     auto container = getContainer();
     for (auto& mng : container) {

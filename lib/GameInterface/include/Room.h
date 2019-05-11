@@ -59,7 +59,7 @@ public:
 
     virtual void initialize();
 
-    virtual void updateObserver(const Packet&) = 0;
+    virtual void updateObserver(const packet::Packet&) = 0;
 
 protected:
     virtual void postEnter(const player_ptr& ply) = 0;
@@ -68,9 +68,9 @@ protected:
 
     virtual void destory();
 
-    void broadcast(const Packet& packet);
+    void broadcast(const packet::Packet& packet);
 
-    void boradcastExclude(const unique_type, const Packet&);
+    void boradcastExclude(const unique_type, const packet::Packet&);
 
 private:
 

@@ -20,7 +20,7 @@ public:
 
     using unique_type = Observer::unique_type;
 
-    virtual void boradcast(game_interface::Packet& packet) = 0;
+    virtual void boradcast(packet::Packet& packet) = 0;
 
     virtual void detach(unique_type obs) = 0;
 

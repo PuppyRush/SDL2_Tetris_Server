@@ -35,9 +35,9 @@ public:
     virtual void notify() override
     {}
 
-    virtual void updateObserver(const game_interface::Packet& packet);
+    virtual void updateObserver(const game_interface::packet::Packet& packet);
 
-    virtual void boradcast(game_interface::Packet& packet) override;
+    virtual void boradcast(game_interface::packet::Packet& packet) override;
 
     virtual void detach(ManagerInterface::unique_type) override;
 

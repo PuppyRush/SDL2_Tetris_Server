@@ -20,6 +20,7 @@
 #include "../include/ConnectingPlayerQueue.h"
 
 using namespace server;
+using namespace game_interface::packet;
 
 PlayerService::PlayerService(ACE_SOCK_Acceptor& acceptor, ACE_Reactor* reactor)
         : ACE_Event_Handler(reactor), peer_(ACE_INVALID_HANDLE)
@@ -67,9 +68,7 @@ PlayerService::handle_input(ACE_HANDLE fd/* = ACE_INVALID_HANDLE*/)
 
     this->reactor()->register_handler(this, ACE_Event_Handler::WRITE_MASK);
 
-    game_interface::Packet p{in, len};
-    p.toPacket();
-
+    Packet p{in, len};
     game_interface::PacketQueue::getInstance().pushEvent(p);
     return 0;
 }

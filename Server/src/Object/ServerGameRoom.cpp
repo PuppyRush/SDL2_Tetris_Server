@@ -10,8 +10,9 @@
 using namespace std;
 using namespace server;
 using namespace game_interface;
+using namespace game_interface::packet;
 
-void ServerGameRoom::updateObserver(const game_interface::Packet& packet)
+void ServerGameRoom::updateObserver(const Packet& packet)
 {
     switch (packet.getHeader().message) {
         case messageInfo::GAME_REQUEST_BOARDINFO:
@@ -21,14 +22,14 @@ void ServerGameRoom::updateObserver(const game_interface::Packet& packet)
 
 }
 
-void ServerGameRoom::responseGameBoardInfo(const game_interface::Packet& packet)
+void ServerGameRoom::responseGameBoardInfo(const Packet& packet)
 {
 
     for (const auto& ply : getPlayerContainer()) {
         Packet copied{packet};
-        copied.setHeader().destId = ply->getUnique();
-        copied.setHeader().senderId = this->getUnique();
-        copied.setHeader().message = messageInfo::GAME_RESPONSE_BOARDINFO;
+        copied.setDestId(ply->getUnique());
+        copied.setSenderId(this->getUnique());
+        copied.setMessage(messageInfo::GAME_RESPONSE_BOARDINFO);
         ply->sendPacket(copied);
     }
 }

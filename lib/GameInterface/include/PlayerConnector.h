@@ -21,13 +21,13 @@
 
 namespace game_interface {
 
-class ClientConnector : public ACE_Event_Handler
+class PlayerConnector : public ACE_Event_Handler
 {
 
 public:
-    ClientConnector(const char* ipstr, ACE_Reactor* reactor, ClientService& stream);
+    PlayerConnector(const char* ipstr, ACE_Reactor* reactor, ClientService& stream);
 
-    virtual ~ClientConnector(void);
+    virtual ~PlayerConnector(void);
 
     void connect();
 

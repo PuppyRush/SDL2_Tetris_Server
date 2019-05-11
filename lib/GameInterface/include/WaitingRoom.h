@@ -34,7 +34,7 @@ public:
     inline const room_container& getGameRoomContiner() const noexcept
     { return m_rooms; }
 
-    virtual void updateObserver(const Packet&) = 0;
+    virtual void updateObserver(const packet::Packet&) = 0;
 
 protected:
     virtual void postAddedGameRoom(const room_ptr& room) = 0;

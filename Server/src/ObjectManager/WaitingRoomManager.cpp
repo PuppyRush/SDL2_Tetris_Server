@@ -12,6 +12,7 @@
 using namespace std;
 using namespace server;
 using namespace game_interface;
+using namespace game_interface::packet;
 
 void WaitingRoomManager::postDetach(const unique_type unique)
 {
@@ -22,7 +23,7 @@ void WaitingRoomManager::postAttach(const element_type& element)
     sendCreateWaitingRoom(element);
 }
 
-void WaitingRoomManager::updateObserver(const game_interface::Packet& packet)
+void WaitingRoomManager::updateObserver(const Packet& packet)
 {
     if (exist(packet.getHeader().destId)) {
         at(packet.getHeader().destId)->updateObserver(packet);
@@ -38,7 +39,7 @@ void WaitingRoomManager::updateObserver(const game_interface::Packet& packet)
     }
 }
 
-void WaitingRoomManager::sendInitInfo(const game_interface::Packet& packet)
+void WaitingRoomManager::sendInitInfo(const Packet& packet)
 {
     if (!PlayerManager::getInstance()->exist(packet.getHeader().senderId)) {
         return;
@@ -57,7 +58,7 @@ void WaitingRoomManager::sendCreateWaitingRoom(element_type obj)
 
 }
 
-void WaitingRoomManager::boradcast(game_interface::Packet& packet)
+void WaitingRoomManager::boradcast(Packet& packet)
 {
     for (const auto& wroom : getContainer()) {
         //ply->sendPacket(packet);

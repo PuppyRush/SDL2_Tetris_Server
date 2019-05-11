@@ -11,7 +11,7 @@
 
 #include <unordered_map>
 
-#include "../src/SubScription/Subject.h"
+#include "Subject.h"
 #include "Object.h"
 #include "Observer.h"
 

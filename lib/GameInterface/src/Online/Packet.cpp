@@ -5,29 +5,35 @@
 #include <algorithm>
 
 #include "GameInterface/include/Packet.h"
+#include "include/Initiator.h"
 
 using namespace game_interface;
+using namespace game_interface::packet;
 
 Packet::Packet(const Header& header)
-        : m_header(header)
+        : m_header(header),
+          m_isRecv(false)
 {
     this->m_header.timestamp = std::time(nullptr);
 }
 
 Packet::Packet(const Header& _header, const Json::Value& _payload)
-        : m_header(_header), m_payload(_payload)
+        : m_header(_header), m_payload(_payload),
+          m_isRecv(false)
 {
     this->m_header.timestamp = std::time(nullptr);
 }
 
 Packet::Packet(Header&& _header, Json::Value&& _payload)
-        : m_header(_header), m_payload(_payload)
+        : m_header(_header), m_payload(_payload),
+          m_isRecv(false)
 {
     this->m_header.timestamp = std::time(nullptr);
 }
 
-Packet::Packet(buffer_ptr buf, const size_type size)
-        : m_bufSize(size)
+Packet::Packet(const buffer_ptr& buf, const size_type size)
+        : m_bufSize(size),
+          m_isRecv(true)
 {
     if (size >= BUF_MAX_SIZE) {
         m_validPacket = false;
@@ -35,9 +41,11 @@ Packet::Packet(buffer_ptr buf, const size_type size)
     }
 
     memcpy(m_buf, buf, size);
+
+    toPacket();
 }
 
-Packet::Packet(const packet_type _packet)
+Packet::Packet(const packet_type& _packet)
         : m_bufSize(_packet.second)
 {
     if (_packet.second > BUF_MAX_SIZE) {
@@ -58,6 +66,7 @@ std::pair<std::__decay_and_strip<unsigned char (&)[1024]>::__type, long>
 Packet::toByte() const
 {
     memset(m_buf, 0, BUF_MAX_SIZE);
+    m_header.where = g_isServer ? messageDirection::SERVER : messageDirection::CLIENT;
 
     if (m_header.where == messageDirection::UNKOWN or
         m_header.message == messageInfo::UNKWON or
@@ -77,11 +86,12 @@ Packet::toByte() const
     return std::make_pair(m_buf, m_bufSize);
 }
 
-Packet* Packet::toPacket()
+void Packet::toPacket()
 {
     if (m_bufSize <= 0) {
         m_validPacket = false;
-        return this;
+        assert(0);
+        return;
     }
 
     memcpy(&m_header, m_buf, header_size);
@@ -91,7 +101,7 @@ Packet* Packet::toPacket()
     Json::Reader reader;
     reader.parse(bufstr, m_payload);
 
-    return this;
+    std::cout << "[payload] " << std::endl << m_payload << std::endl;
 }
 
 void Packet::appendObject(const game_interface::Object* obj)
@@ -104,3 +114,4 @@ void Packet::appendObject(const game_interface::Object* obj)
     m_payload["unique"] = static_cast<Json::Value::UInt64>(obj->getUnique());
     m_payload["maketime"] = static_cast<Json::Value::UInt64>(obj->getMaketime());
 }
+

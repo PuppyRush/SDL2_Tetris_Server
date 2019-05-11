@@ -6,6 +6,7 @@
 #include "GameInterface/include/WaitingRoom.h"
 
 using namespace game_interface;
+using namespace game_interface::packet;
 using namespace std;
 
 void WaitingRoom::updateObserver(const Packet&)

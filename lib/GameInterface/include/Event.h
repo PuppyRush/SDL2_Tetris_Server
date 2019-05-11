@@ -9,6 +9,8 @@
 #pragma once
 #endif
 
+#include <SDL2/SDL_events.h>
+
 namespace game_interface {
 
 enum GAMEINTERFACE_EVENT

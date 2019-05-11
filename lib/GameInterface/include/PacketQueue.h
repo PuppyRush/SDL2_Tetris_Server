@@ -43,21 +43,17 @@ public:
 
     void run();
 
-    void pushEvent(Packet&& event);
+    void pushEvent(packet::Packet&& event);
 
-    void pushEvent(const Packet& event);
+    void pushEvent(const packet::Packet& event);
 
-    Packet popEvent();
+    const packet::Packet popEvent();
 
     inline void end()
     { m_isContinue.exchange(false); }
 
-    inline void setServer(bool b)
-    { m_isServer = b; }
-
     static PacketQueue& getInstance()
     {
-
         return boost::serialization::singleton<PacketQueue>::get_mutable_instance();
     }
 
@@ -71,7 +67,7 @@ protected:
 
 private:
 
-    std::queue<Packet> m_packetQ;
+    std::queue<packet::Packet> m_packetQ;
     std::condition_variable m_cond;
     std::mutex m_mutex;
     std::atomic_bool m_isContinue = true;

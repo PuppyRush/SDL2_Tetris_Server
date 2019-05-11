@@ -14,6 +14,7 @@
 using namespace std;
 using namespace server;
 using namespace game_interface;
+using namespace game_interface::packet;
 
 void ServerWaitingRoom::enter(const player_ptr& ply)
 {
@@ -55,7 +56,7 @@ void ServerWaitingRoom::postRemovedGameRoom(const unique_type unique)
 
 }
 
-void ServerWaitingRoom::updateObserver(const game_interface::Packet& packet)
+void ServerWaitingRoom::updateObserver(const Packet& packet)
 {
     switch (packet.getHeader().message) {
         case messageInfo::WAITINGROOMS_REQUEST_ENTER:
@@ -70,23 +71,23 @@ void ServerWaitingRoom::updateObserver(const game_interface::Packet& packet)
     }
 }
 
-void ServerWaitingRoom::broadcastChat(const game_interface::Packet& packet)
+void ServerWaitingRoom::broadcastChat(const Packet& packet)
 {
     Packet& chatPacket = const_cast<Packet&>(packet);
 
-    chatPacket.setHeader().senderId = getUnique();
-    chatPacket.setHeader().destId = getUnique();
-    chatPacket.setHeader().message = messageInfo::WAITINGROOMS_RECV_CHAT;
+    chatPacket.setSenderId(getUnique());
+    chatPacket.setDestId(getUnique());
+    chatPacket.setMessage(messageInfo::WAITINGROOMS_RECV_CHAT);
 
     Room::broadcast(chatPacket);
 }
 
-void ServerWaitingRoom::recvRequestEnter(const game_interface::Packet& packet)
+void ServerWaitingRoom::recvRequestEnter(const Packet& packet)
 {
 
 }
 
-void ServerWaitingRoom::recvRequestCreate(const game_interface::Packet& packet)
+void ServerWaitingRoom::recvRequestCreate(const Packet& packet)
 {
     const auto json = packet.getPayload();
 

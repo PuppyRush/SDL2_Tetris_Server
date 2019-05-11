@@ -9,45 +9,48 @@
 #pragma once
 #endif
 
+#include <iostream>
+#include <chrono>
 #include <type_traits>
 #include <string>
 #include <jsoncpp/json/json.h> // or jsoncpp/json.h , or json/json.h etc.
 
-#include "GameInterface/include/Constant.h"
-#include "GameInterface/include/TypeTraits.h"
-#include "GameInterface/include/Type.h"
-#include "GameInterface/include/Object.h"
+#include "Time.h"
+#include "Constant.h"
+#include "TypeTraits.h"
+#include "Type.h"
+#include "Object.h"
 #include "MessageType.h"
 
-namespace game_interface {
+namespace game_interface::packet {
+
+typedef struct Header
+{
+
+    Header() = default;
+
+    Header(const t_unique _destId, const t_unique _senderId, const messageInfo _message)
+            : destId(_destId), senderId(_senderId), message(_message)
+    {}
+
+    t_unique destId = NULL_ID;
+    t_unique senderId = NULL_ID;
+    messageDirection where = messageDirection::UNKOWN;
+    messageInfo message = messageInfo::UNKWON;
+    t_time timestamp = 0;
+} Header;
+
 
 class Packet final
 {
 public:
-
-    typedef struct Header
-    {
-
-        Header() = default;
-
-        Header(const t_unique _destId, const t_unique _senderId, const messageInfo _message)
-                : destId(_destId), senderId(_senderId), message(_message)
-        {}
-
-        t_unique destId = NULL_ID;
-        t_unique senderId = NULL_ID;
-        messageDirection where = messageDirection::UNKOWN;
-        messageInfo message = messageInfo::UNKWON;
-        t_time timestamp = 0;
-    } Header;
-
     static constexpr const size_t BUF_MAX_SIZE = 1024;
     static constexpr const size_t header_size = sizeof(Header);
 
-    using buffer_type = unsigned char;
-    using buffer_ptr = buffer_type*;
-    using size_type = ssize_t;
-    using packet_type = std::pair<buffer_type[BUF_MAX_SIZE], size_type>;
+    using buffer_type   = unsigned char;
+    using buffer_ptr    = buffer_type*;
+    using size_type     = ssize_t;
+    using packet_type   = std::pair<buffer_type[BUF_MAX_SIZE], size_type>;
 
     Packet(const Header& _header);
 
@@ -55,33 +58,49 @@ public:
 
     Packet(Header&& _header, Json::Value&& _payload);
 
-    Packet(buffer_ptr buf, const size_type size);
+    Packet(const buffer_ptr& buf, const size_type size);
 
-    Packet(const packet_type _packet);
+    Packet(const packet_type& _packet);
 
     Packet(const char*, const size_type);
+
+    friend std::ostream& operator<<(std::ostream& os, const Packet& packet)
+    {
+        os << "[" << g_modulename ;
+        if(packet.m_isRecv)
+            os << "RECV]";
+        else
+            os << "SEND]";
+        os   << " destid :"  << packet.getHeader().destId
+             << " / message : " << std::to_string(toUType(packet.getHeader().message))
+             << " / timestamp : " << time::current(packet.getHeader().timestamp) << std::endl;
+        return os;
+    }
 
     std::pair<std::__decay_and_strip<unsigned char (&)[1024]>::__type, long>
     toByte() const;
 
-    Packet* toPacket();
-
     void appendObject(const game_interface::Object*);
 
-    inline void updateTime() const
+    inline void setDestId(const t_unique destId)
     {
-        m_header.timestamp = std::time(nullptr);
+        m_header.destId = destId;
     }
 
-    inline void setTimestamp(const t_time time)
-    { m_header.timestamp = time; }
-
-    inline void setUnique(const t_unique id)
-    { m_header.destId = id; }
-
-    inline Header& setHeader() noexcept
+    inline void setSenderId(const t_unique senderId)
     {
-        return m_header;
+        m_header.senderId = senderId;
+    }
+
+    inline void setMessage(const messageInfo message)
+    {
+        m_header.message = message;
+    }
+
+    inline void updateLocale() const
+    {
+        m_header.timestamp = time::now();
+        m_header.where = g_isServer ? messageDirection::SERVER : messageDirection::CLIENT;
     }
 
     inline const Header& getHeader() const noexcept
@@ -112,12 +131,15 @@ private:
         return json.isMember("unique") and json.isMember("maketime");
     }
 
+    void toPacket();
+
     mutable Header m_header;
     Json::Value m_payload;
 
     mutable buffer_type m_buf[BUF_MAX_SIZE];
-    mutable size_type m_bufSize;
-    mutable bool m_validPacket = true;
+    mutable size_type   m_bufSize;
+    mutable bool        m_validPacket = true;
+    const bool          m_isRecv = false;
 };
 
 }

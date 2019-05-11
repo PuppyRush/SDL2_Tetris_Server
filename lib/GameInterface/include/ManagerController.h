@@ -37,7 +37,7 @@ public:
     virtual ~ManagerController()
     {}
 
-    virtual void updateObserver(const game_interface::Packet& packet);
+    virtual void updateObserver(const packet::Packet& packet);
 
     virtual void notify() override
     {}

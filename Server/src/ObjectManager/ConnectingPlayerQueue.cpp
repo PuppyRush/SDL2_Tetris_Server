@@ -12,8 +12,9 @@
 
 using namespace server;
 using namespace game_interface;
+using namespace game_interface::packet;
 
-void ConnectingPlayerQueue::updateObserver(const game_interface::Packet& packet)
+void ConnectingPlayerQueue::updateObserver(const Packet& packet)
 {
     if (exist(packet.getHeader().destId)) {
         auto ply = at(packet.getHeader().destId);
@@ -32,7 +33,7 @@ std::shared_ptr<ConnectingPlayerQueue> ConnectingPlayerQueue::getInstance()
     return inst;
 }
 
-void ConnectingPlayerQueue::boradcast(game_interface::Packet& packet)
+void ConnectingPlayerQueue::boradcast(Packet& packet)
 {
     for (const auto& ply : getContainer()) {
         ply->sendPacket(packet);

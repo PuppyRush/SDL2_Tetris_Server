@@ -20,7 +20,7 @@ public:
     virtual ~ServerWaitingRoom()
     {}
 
-    virtual void updateObserver(const game_interface::Packet&) override;
+    virtual void updateObserver(const game_interface::packet::Packet&) override;
 
     inline virtual const std::string_view& getUniqueName() const
     { return game_interface::NAME_WAITINGROOM; }
@@ -45,11 +45,11 @@ public:
 
     virtual void postRemovedGameRoom(const unique_type unique) override;
 
-    void broadcastChat(const game_interface::Packet& packet);
+    void broadcastChat(const game_interface::packet::Packet& packet);
 
-    void recvRequestEnter(const game_interface::Packet& packet);
+    void recvRequestEnter(const game_interface::packet::Packet& packet);
 
-    void recvRequestCreate(const game_interface::Packet& packet);
+    void recvRequestCreate(const game_interface::packet::Packet& packet);
 };
 
 }

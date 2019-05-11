@@ -12,6 +12,7 @@
 #include "GameInterface/include/PacketQueue.h"
 
 using namespace game_interface;
+using namespace game_interface::packet;
 
 ClientService::ClientService(ACE_Reactor* reactor)
         : ACE_Event_Handler(reactor), peer_(ACE_INVALID_HANDLE), state_(C_INIT)
@@ -64,8 +65,6 @@ ClientService::handle_input(ACE_HANDLE fd/* = ACE_INVALID_HANDLE*/)
     in[len] = 0;
 
     Packet p{in, len};
-    p.toPacket();
-
     PacketQueue::getInstance().pushEvent(p);
 
     return 0;

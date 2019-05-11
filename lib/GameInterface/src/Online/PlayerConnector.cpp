@@ -2,24 +2,24 @@
 // Created by kim on 19. 1. 10.
 //
 
-#include "GameInterface/include/ClientConnector.h"
-#include  "GameInterface/include/ClientConnector.h"
+#include "GameInterface/include/PlayerConnector.h"
+#include  "GameInterface/include/PlayerConnector.h"
 #include  <ace/INET_Addr.h>
 #include  <iostream>
 
 using namespace game_interface;
 
-ClientConnector::ClientConnector(const char* ipstr, ACE_Reactor* reactor, ClientService& stream)
+PlayerConnector::PlayerConnector(const char* ipstr, ACE_Reactor* reactor, ClientService& stream)
         : ACE_Event_Handler(reactor), m_stream(stream), m_ipstring(ipstr)
 {
 
 }
 
-ClientConnector::~ClientConnector(void)
+PlayerConnector::~PlayerConnector(void)
 {
 }
 
-void ClientConnector::connect()
+void PlayerConnector::connect()
 {
     ACE_INET_Addr addr("127.0.0.1:12345");
     ACE_Time_Value rt(0, 0);
@@ -33,13 +33,13 @@ void ClientConnector::connect()
 }
 
 ACE_HANDLE
-ClientConnector::get_handle(void) const
+PlayerConnector::get_handle(void) const
 {
     return m_stream.peer().get_handle();
 }
 
 int
-ClientConnector::handle_input(ACE_HANDLE fd/* = ACE_INVALID_HANDLE*/)
+PlayerConnector::handle_input(ACE_HANDLE fd/* = ACE_INVALID_HANDLE*/)
 {
     //접속  실패
     std::cout << std::endl << "Connect fail" << std::endl;
@@ -48,7 +48,7 @@ ClientConnector::handle_input(ACE_HANDLE fd/* = ACE_INVALID_HANDLE*/)
 }
 
 int
-ClientConnector::handle_output(ACE_HANDLE fd/* = ACE_INVALID_HANDLE*/)
+PlayerConnector::handle_output(ACE_HANDLE fd/* = ACE_INVALID_HANDLE*/)
 {
     //접속  성공
     std::cout << std::endl << "Connect success" << std::endl;
@@ -59,14 +59,14 @@ ClientConnector::handle_output(ACE_HANDLE fd/* = ACE_INVALID_HANDLE*/)
 }
 
 int
-ClientConnector::handle_exception(ACE_HANDLE fd/* = ACE_INVALID_HANDLE*/)
+PlayerConnector::handle_exception(ACE_HANDLE fd/* = ACE_INVALID_HANDLE*/)
 {
     // 접속  실패
     return handle_input(fd);
 }
 
 int
-ClientConnector::handle_close(ACE_HANDLE handle, ACE_Reactor_Mask close_mask)
+PlayerConnector::handle_close(ACE_HANDLE handle, ACE_Reactor_Mask close_mask)
 {
     ACE_Reactor_Mask m = ACE_Event_Handler::ALL_EVENTS_MASK | ACE_Event_Handler::DONT_CALL;
     this->reactor()->remove_handler(this, m);

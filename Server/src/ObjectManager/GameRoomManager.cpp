@@ -13,6 +13,7 @@
 using namespace std;
 using namespace server;
 using namespace game_interface;
+using namespace game_interface::packet;
 
 void GameRoomManager::postDetach(const unique_type unique)
 {
@@ -22,7 +23,7 @@ void GameRoomManager::postAttach(const element_type& ply)
 {
 }
 
-void GameRoomManager::updateObserver(const game_interface::Packet& packet)
+void GameRoomManager::updateObserver(const Packet& packet)
 {
     if (exist(packet.getHeader().destId)) {
         at(packet.getHeader().destId)->updateObserver(packet);
@@ -32,7 +33,7 @@ void GameRoomManager::updateObserver(const game_interface::Packet& packet)
     }
 }
 
-void GameRoomManager::boradcast(game_interface::Packet& packet)
+void GameRoomManager::boradcast(Packet& packet)
 {
     for (const auto& groom : getContainer()) {
         //ply->sendPacket(packet);
@@ -46,5 +47,7 @@ void GameRoomManager::detach(ManagerInterface::unique_type unique)
 
 ManagerInterface::unique_type GameRoomManager::findUser(ManagerInterface::unique_type)
 {
+
+
 
 }

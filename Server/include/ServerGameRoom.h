@@ -15,9 +15,9 @@ class ServerGameRoom : public game_interface::GameRoom
 {
 public:
 
-    virtual void updateObserver(const game_interface::Packet&) override;
+    virtual void updateObserver(const game_interface::packet::Packet&) override;
 
-    void responseGameBoardInfo(const game_interface::Packet&);
+    void responseGameBoardInfo(const game_interface::packet::Packet&);
 
     inline virtual const std::string_view& getUniqueName() const
     { return game_interface::NAME_GAMEROOM; }

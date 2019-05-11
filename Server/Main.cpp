@@ -20,6 +20,7 @@
 #include "include/ConnectingPlayerQueue.h"
 #include "include/GameRoomManager.h"
 #include "GameInterface/include/ManagerController.h"
+#include "GameInterface/include/Initiator.h"
 
 void fn(ACE_Reactor* app)
 {
@@ -28,11 +29,8 @@ void fn(ACE_Reactor* app)
 
 int main(int argc, char* argv[])
 {
-
     using namespace server;
-
-    game_interface::PacketQueue::getInstance().setServer(true);
-    game_interface::PacketQueue::getInstance().run();
+    game_interface::GameInterface_Init(true);
 
     auto& mngCtl = game_interface::ManagerController::getInstance();
     mngCtl.attach(WaitingRoomManager::getInstance());

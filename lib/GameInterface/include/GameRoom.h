@@ -23,7 +23,7 @@ public:
 
     virtual void fromJson(const Json::Value& json);
 
-    virtual void updateObserver(const Packet&) = 0;
+    virtual void updateObserver(const packet::Packet&) = 0;
 
 protected:
 

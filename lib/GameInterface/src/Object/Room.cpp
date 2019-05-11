@@ -8,6 +8,7 @@
 #include "GameInterface/include/Room.h"
 
 using namespace game_interface;
+using namespace game_interface::packet;
 
 Room::Room()
         : m_roomnumber(Atomic::newWaitingRoomNumber())
@@ -77,6 +78,7 @@ bool Room::exist(const unique_type unique) const noexcept
     });
 
     if (it == m_players.end()) {
+        return false;
     } else {
         return true;
     }
@@ -108,8 +110,9 @@ void Room::broadcast(const Packet& packet)
 void Room::boradcastExclude(const unique_type unique, const Packet& packet)
 {
     for (const auto& ply : m_players) {
-        if(ply->compareUnique(unique))
+        if (ply->compareUnique(unique)) {
             continue;
+        }
 
         ply->sendPacket(packet);
     }

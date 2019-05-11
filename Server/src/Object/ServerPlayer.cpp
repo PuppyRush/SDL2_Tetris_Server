@@ -13,11 +13,12 @@ using namespace std;
 using namespace server;
 using namespace game_interface;
 using namespace tetris_module;
+using namespace game_interface::packet;
 
 ServerPlayer::ServerPlayer()
 {}
 
-void ServerPlayer::updateObserver(const game_interface::Packet& packet)
+void ServerPlayer::updateObserver(const Packet& packet)
 {
     switch (packet.getHeader().message) {
         case messageInfo::PLAYER_INIT_INFO:
@@ -28,11 +29,9 @@ void ServerPlayer::updateObserver(const game_interface::Packet& packet)
 
 void ServerPlayer::sendPacket(const Packet& packet) const
 {
-    packet.updateTime();
+    packet.updateLocale();
 
-    printf("server send : %d %d %dl\n", packet.getHeader().senderId, toUType(packet.getHeader().message),
-           packet.getHeader().timestamp);
-
+    std::cout << packet;
     auto bytes = packet.toByte();
     m_service->send((void*)bytes.first, bytes.second);
 }
@@ -46,7 +45,7 @@ void ServerPlayer::sendUniqueInfo()
     sendPacket(packet);
 }
 
-void ServerPlayer::recvInitInfo(const game_interface::Packet packet)
+void ServerPlayer::recvInitInfo(const Packet packet)
 {
     const auto& json = packet.getPayload();
     fromJson(json);
@@ -74,8 +73,6 @@ void ServerPlayer::enterRoom(const size_t order)
         return;
     }
 
-    m_ctl = unique_ptr<tetris_module::TFigureController>(new tetris_module::TFigureController(
-            static_cast<int>( order)));
-    //m_ctl = make_unique<TFigureController>(order);
+    m_ctl = make_unique<TFigureController>(order);
 }
 

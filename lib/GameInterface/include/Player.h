@@ -39,9 +39,9 @@ public:
 
     virtual const std::string_view& getUniqueName() const = 0;
 
-    virtual void updateObserver(const Packet&) = 0;
+    virtual void updateObserver(const packet::Packet&) = 0;
 
-    virtual void sendPacket(const game_interface::Packet&) const = 0;
+    virtual void sendPacket(const packet::Packet&) const = 0;
 
 private:
     std::string m_name;

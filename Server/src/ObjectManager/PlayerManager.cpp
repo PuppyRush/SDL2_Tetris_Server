@@ -13,6 +13,7 @@
 using namespace std;
 using namespace server;
 using namespace game_interface;
+using namespace game_interface::packet;
 
 void PlayerManager::postDetach(const unique_type unique)
 {
@@ -28,14 +29,14 @@ void PlayerManager::postAttach(const element_type& ply)
     }
 }
 
-void PlayerManager::updateObserver(const game_interface::Packet& packet)
+void PlayerManager::updateObserver(const Packet& packet)
 {
     if (exist(packet.getHeader().destId)) {
         at(packet.getHeader().destId)->updateObserver(packet);
     }
 }
 
-void PlayerManager::boradcast(game_interface::Packet& packet)
+void PlayerManager::boradcast(Packet& packet)
 {
     for (const auto& ply : getContainer()) {
         ply.second->sendPacket(packet);
