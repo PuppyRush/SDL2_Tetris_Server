@@ -2,9 +2,9 @@
 // Created by chaed on 19. 2. 21.
 //
 
-#include "GameInterface/include/PacketQueue.h"
-#include "GameInterface/include/ManagerController.h"
-#include "include/Constant.h"
+#include "PacketQueue.h"
+#include "ManagerController.h"
+#include "Constant.h"
 
 using namespace game_interface;
 using namespace game_interface::packet;
@@ -52,6 +52,12 @@ const Packet PacketQueue::popEvent()
     const auto msg = m_packetQ.front();
     m_packetQ.pop();
     return msg;
+}
+
+bool PacketQueue::isEmpty()
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return m_packetQ.empty();
 }
 
 void PacketQueue::notify()

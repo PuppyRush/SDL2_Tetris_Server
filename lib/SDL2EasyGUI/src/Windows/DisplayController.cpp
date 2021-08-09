@@ -8,19 +8,18 @@
 #include <functional>
 #include <limits>
 
-#include <SDL.h>
 #include <SDL2/SDL.h>
 
-#include "SDL2EasyGUI/include/SEG_Constant.h"
-#include "SDL2EasyGUI/include/SEG_Type.h"
-
-#include "SDL2EasyGUI/include/DisplayController.h"
-//#include "GameInterface/Online/PacketQueue.h"
+#include "include/SEG_Constant.h"
+#include "include/SEG_Type.h"
+#include "include/MessageDialog.h"
+#include "include/DisplayController.h"
 
 using namespace std;
-using namespace sdleasygui;
+using namespace seg;
 
 DisplayController::DisplayController()
+    :m_run(true)
 {
 }
 
@@ -36,7 +35,6 @@ void DisplayController::alert(display_type* display)
     m_alertAry.emplace_back(display);
     m_modalAryCV.notify_one();
 
-    display->initialize();
 }
 
 void DisplayController::alert_close()
@@ -45,109 +43,94 @@ void DisplayController::alert_close()
     m_alertAry.pop_back();
 }
 
-void DisplayController::modal_open(display_ptr display)
+void DisplayController::modal_close(const display_ptr& dp)
 {
-    m_modalStack.emplace_back(display);
-    m_modalAryCV.notify_one();
-
-    _open(display);
-
-    /*if(!m_modalStack.empty())
+    if (auto _dp = DisplayMap::getInstance().popModal(dp->getSuperWindowID()) ;
+        _dp != nullptr)
     {
-        auto parent = m_modalStack.front();
-        SDL_SetWindowModalFor(display->getWindow()->getSDLWindow(),
-                              parent->getWindow()->getSDLWindow());
-    }*/
+        //
+    }
 }
 
-void DisplayController::modal_close()
+
+void DisplayController::modaless_close(display_type::unique_type uniqueId)
 {
-    m_modalStack.pop_back();
+    if (auto dp = DisplayMap::getInstance().eraseModaless(uniqueId);
+        dp != nullptr)
+    {
+        //
+    }
 }
 
-void DisplayController::modaless_open(display_ptr display)
+
+void DisplayController::_preModalOpen(display_ptr display)
 {
-    m_modalessAry.emplace_back(display);
-    m_modalAryCV.notify_one();
 
-    _open(display);
 }
 
-void DisplayController::modaless_close(sdleasygui::t_id winid)
-{
-    auto it = std::remove_if(begin(m_modalessAry), end(m_modalessAry), [winid](const display_ptr ptr) {
-        if (winid == ptr->getWindowID()) {
-            // ptr->postDestroy(ptr);
-            return true;
-        } else {
-            return false;
-        }
-    });
-}
-
-void DisplayController::_open(display_ptr display)
+void DisplayController::_postOpenDisplay(display_ptr display)
 {
     display->initialize();
     display->postCreate(display);
 }
 
-void DisplayController::close(const t_id id)
-{
-    if (!m_modalStack.empty() && m_modalStack.back()->getWindowID() == id) {
-        auto quitDisplay = m_modalStack.back();
-        m_modalStack.pop_back();
-    } else {
-        std::remove_if(begin(m_modalessAry), end(m_modalessAry), [id](auto display) {
-            return display->getWindowID() == id;
-        });
-    }
-}
+//void DisplayController::close(const display_ptr id)
+//{
+//    if
+//    DisplayMap::getInstance().fi
+//}
 
 void DisplayController::run()
 {
-    m_thread = std::thread(&DisplayController::_pumpEvent, this);
+    m_mainDp->initialize();
+    DisplayMap::getInstance().initialize(m_mainDp);
+    m_mainDpThread = std::thread(&DisplayController::startMainDisplay, this);
+
+    _pumpEvent();
+
+    m_mainDpThread.join();
 }
 
 void DisplayController::_pumpEvent()
 {
-    std::unique_lock<std::mutex> lock(m_modalAryMutex);
-    m_modalAryCV.wait(lock, [=]() { return !m_modalStack.empty() || !m_modalessAry.empty(); });
+    /*std::unique_lock<std::mutex> lock(m_modalAryMutex);
+    m_modalAryCV.wait(lock, [=]() { return !m_modalStack.empty() || !m_modalessAry.empty(); });*/
 
-    while (m_run) {
-        SDL_Event* event = new SDL_Event{};
-        SDL_WaitEvent(event);
+     while (m_run) {
+        SDL_Event event;
+        SDL_WaitEvent(&event);
 
-        const auto winid = getActivatedWindowID(event);
-        if (winid != NULL_WINDOW_ID) {
-            if (auto display = findFromId(winid); display != nullptr) {
-                display->pushEvent(event);
-            }
-        } else {
-            //broadcasting m_userEvent if not found something targeted id (display, controller)
-            if (!m_modalStack.empty()) {
-                m_modalStack.back()->pushEvent(event);
-            }
-
-            for (const auto modaless : m_modalessAry) {
-                modaless->pushEvent(event);
-            }
+        auto dp = DisplayMap::getInstance().find(event.window.windowID);
+        if (dp == nullptr)
+        {
+            dp = DisplayMap::getInstance().find(event.user.windowID);
+            if (dp == nullptr)
+                continue;
         }
 
-        for (auto& display : m_alertAry) {
-            display->pushEvent(event);
+        if (event.type == SEG_DRAW ){
+            dp->onEvent(event);
+        }
+        else {
+            dp->pushEvent(event);
+        }
+
+        if (m_newDisplayQ.isEmpty() == false){
+            auto dp = m_newDisplayQ.popEvent();
+            _postOpenDisplay(dp);
         }
     }
 }
 
-DisplayController::display_ptr DisplayController::findFromId(const t_id id)
+template<class T>
+DisplayController::display_ptr DisplayController::_find(const T& ary, const t_id id)
 {
-    if (display_ptr display = _find(m_modalessAry, id);
-            display != nullptr) {
-        return display;
-    } else {
-        return _find(m_modalStack, id);
-    }
+    auto it = std::find_if(begin(ary), end(ary), [id](const auto& ptr) {
+        return id == ptr->getWindowID();
+    });
+    return it == ary.end() ? nullptr : *it;
 }
+
 
 t_id DisplayController::getActivatedWindowID(const SDL_Event* event)
 {
@@ -189,17 +172,10 @@ t_id DisplayController::getActivatedWindowID(const SDL_Event* event)
         case SDL_JOYDEVICEADDED  :
         case SDL_JOYDEVICEREMOVED:
             break;
+        default:
+            break;
     }
     return windowId;
-}
-
-template<class T>
-DisplayController::display_ptr DisplayController::_find(const T& ary, const t_id id)
-{
-    auto it = std::find_if(begin(ary), end(ary), [id](const auto ptr) {
-        return id == ptr->getWindowID();
-    });
-    return it == ary.end() ? nullptr : *it;
 }
 
 void DisplayController::_release()
@@ -208,15 +184,20 @@ void DisplayController::_release()
 
 void DisplayController::finish()
 {
-    for (const auto display : m_modalStack) {
-        EventPusher event{display->getWindowID(), WINDOW_CLOSE};
+    /*for (const auto display : m_modalStack) {
+        event::
+        event{display->getWindowID(), WINDOW_CLOSE};
         event.pushEvent();
     }
 
-    for (const auto display : m_modalessAry) {
-        EventPusher event{display->getWindowID(), WINDOW_CLOSE};
-        event.pushEvent();
-    }
+    for (auto& q : m_modalessAry)
+    {
+        for(const auto& dp : q)
+        {
+            event::EventPusher event {dp->getWindowID(), WINDOW_CLOSE};
+            event.pushEvent();
+        }
+    }*/
 
     /* while(!m_modalStack.empty())
      {
@@ -242,15 +223,27 @@ void DisplayController::finish()
 
 void DisplayController::refreshModal()
 {
-    for (const auto display : m_modalStack) {
-        display->refresh();
-    }
-    for (const auto display : m_modalessAry) {
-        display->refresh();
-    }
+    //for (const auto display : m_modalStack) {
+    //    display->refresh();
+    //}
+    //for (const auto display : m_modalessAry) {
+    //    //display->refresh();
+    //}
 }
 
 void DisplayController::getDisplay(const t_id displayId)
 {
 
+}
+
+void DisplayController::setMainDisplay(const display_ptr dp)
+{
+    std::unique_lock<std::mutex> lock(m_mainDisplayChangeMutex);
+    dp->setSuperWindowID(SUPER_WINDOWS_ID);
+    m_mainDp = dp;
+}
+
+void DisplayController::startMainDisplay()
+{
+    m_mainDp->modaless();
 }

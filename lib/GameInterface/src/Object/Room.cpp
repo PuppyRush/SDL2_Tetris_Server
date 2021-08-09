@@ -5,13 +5,13 @@
 #include <algorithm>
 #include <cassert>
 
-#include "GameInterface/include/Room.h"
+#include "Room.h"
 
 using namespace game_interface;
 using namespace game_interface::packet;
 
 Room::Room()
-        : m_roomnumber(Atomic::newWaitingRoomNumber())
+        : m_roomnumber(atomic::Atomic<Room>::getInstance().newUnique())
 {}
 
 void Room::initialize()
@@ -117,3 +117,19 @@ void Room::boradcastExclude(const unique_type unique, const Packet& packet)
         ply->sendPacket(packet);
     }
 }
+
+const Room::player_ptr&
+Room::get(const unique_type unique) const
+{
+    auto it = std::find_if(begin(m_players), end(m_players), [unique](const player_ptr element) {
+        return element->compareUnique(unique);
+    });
+    if (it == m_players.end()) {
+        throw std::invalid_argument("there is no player in gameroom");
+    } else {
+        return *it;
+    }
+
+}
+
+

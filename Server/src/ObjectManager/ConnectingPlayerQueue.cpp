@@ -55,5 +55,5 @@ void ConnectingPlayerQueue::postAttach(const element_type& element)
 
 ManagerInterface::unique_type ConnectingPlayerQueue::findUser(ManagerInterface::unique_type)
 {
-
+    return 0;
 }

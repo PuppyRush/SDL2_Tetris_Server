@@ -2,36 +2,37 @@
 // Created by chaed on 18. 11. 24.
 //
 
-#ifndef SDLEASYGUIDE_TPROPERTY_H
-#define SDLEASYGUIDE_TPROPERTY_H
+#ifndef SDL2EASYGUI_TPROPERTY_H
+#define SDL2EASYGUI_TPROPERTY_H
 
 #if _MSC_VER >= 1200
 #pragma once
 #endif
 
+#include <limits>
+
 #include "SEG_Type.h"
 
-namespace sdleasygui {
+namespace seg {
 
-const t_size WINDOW_HEIGHT = 900;
-
-const t_size WINDOW_WIDTH = 1000;
-
-enum class ControllerKind : t_type
+enum class ControlKind : t_type
 {
     ListBox,
+    ComboBox,
     StaticLabel,
+    ImageLabel,
     EditLabel,
     Button,
+    CheckBox,
     RadioButton,
     Border,
-    ComboBox
 };
 
 enum class TDisplayMode : t_type
 {
     Modal,
-    Modaless
+    Modaless,
+    None
 };
 
 enum class TLocalMode : t_type
@@ -76,7 +77,9 @@ enum EventType
     SEG_DRAW_DISPLAY,
     SEG_DRAW_CONTROLLER,
     SEG_CLICKED_CONTROLLER,
-    SEG_ENTER_CONTROLLER
+    SEG_ENTER_CONTROLLER,
+    SEG_DECORATOR_ATTACH,
+    SEG_DECORATOR_DETACH,
 };
 
 enum class BorderBoundaryType : t_type
@@ -101,14 +104,17 @@ enum SEG_Event : t_eventType
 {
 
     SEGEVENT_START = 0x8500,
-    ADD_MODAL_DISPLAY,
-    ADD_MODALESS_DISPLAY,
-    REFRESH_DISPLAY,
-    WINDOW_CLOSE,
-    SDL_TIMER_EVENT,
-    DETACH_FOCUS,
-    ATTACH_FOCUS,
-    EDITLABEL_CHAR_TEXTCURSOR,
+    SEG_WINDOW_CLOSE,
+    SEG_TIMER_EVENT,
+    SEG_DRAW,
+
+    //
+    SEG_CONTROLLER,
+    SEG_DETACH_FOCUS,
+    SEG_ATTACH_FOCUS,
+    SEG_BOUND,
+    SEG_UNBOUND,
+    //
 
     SEGEVENT_END = 0x8999
 };
@@ -118,6 +124,14 @@ enum class MessageDialogKind
     error,
     warining,
     alert
+};
+
+enum class PropertyChange : t_eventType
+{
+    BoxItemAdd,
+    BoxItemRemove,
+    BoxScrollUp,
+    BoxScrollDown,
 };
 
 }

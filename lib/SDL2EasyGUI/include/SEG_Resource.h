@@ -2,8 +2,8 @@
 // Created by chaed on 19. 2. 5.
 //
 
-#ifndef SDLEASYGUIDE_RESOURCE_H
-#define SDLEASYGUIDE_RESOURCE_H
+#ifndef SDL2EASYGUI_RESOURCE_H
+#define SDL2EASYGUI_RESOURCE_H
 
 #if _MSC_VER >= 1200
 #pragma once
@@ -11,10 +11,10 @@
 
 #include "SEG_Type.h"
 
-namespace sdleasygui {
+namespace seg {
 
 //dont use resource id as 0x0000 (NULL)
-enum resource : t_res
+enum resource : t_id
 {
 
     NONE = 0x0010,
@@ -26,9 +26,16 @@ enum resource : t_res
 
     MESSAGEDIALOG_MSG,
 
-    SEG_RESROUCE_END = 0x3000
+    MAIN_DISPLAY,
+    MESSAGE_DIALOG,
+    INPUT_DIALOG,
+
+    COMBOBOX_ITEM_BEGIN = 0x10000000,
+    COMBOBOX_ITEM_END = 0x6FFFFFFF,
+
+    SEG_RESROUCE_END = COMBOBOX_ITEM_END+1
 };
 
 }
 
-#endif //TETRIS_FIGURE_CLASS_RESOURCE_H
+#endif //SDL2EASYGUI_RESOURCE_H

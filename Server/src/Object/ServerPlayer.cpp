@@ -73,6 +73,6 @@ void ServerPlayer::enterRoom(const size_t order)
         return;
     }
 
-    m_ctl = make_unique<TFigureController>(order);
+    m_ctl = make_unique<TFigureController>();
 }
 

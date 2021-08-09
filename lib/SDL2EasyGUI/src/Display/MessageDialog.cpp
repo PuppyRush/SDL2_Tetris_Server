@@ -3,28 +3,35 @@
 //
 
 #include "MessageDialog.h"
+#include "include/SEG_Drawer.h"
 
-using namespace sdleasygui;
+using namespace seg;
 
 MessageDialog::MessageDialog(const std::string& message, MessageDialogKind kind)
-        : DisplayInterface(toUType(MESSAGEDIALOG_MSG)), m_message(message), m_kind(kind)
+        : DisplayInterface(), m_message(message), m_kind(kind)
 {
-    setWindowTitle(message);
-    setWindowHeight(150);
-    setWindowWidth(200);
-
     setBackgroundColor(ColorCode::white);
+}
+
+std::underlying_type_t<resource> MessageDialog::alert() 
+{
+    return DisplayInterface::alert();
 }
 
 void MessageDialog::registerEvent()
 {
-    SEG_LBUTTONCLICK(sdleasygui::toUType(resource::BTN_OK), &MessageDialog::onClickOk, this);
-    SEG_LBUTTONCLICK(sdleasygui::toUType(resource::BTN_YES), &MessageDialog::onClickYes, this);
-    SEG_LBUTTONCLICK(sdleasygui::toUType(resource::BTN_NO), &MessageDialog::onClickNo, this);
+    SEG_LBUTTONCLICK(seg::toUType(resource::BTN_OK), &MessageDialog::onClickOk, this);
+    SEG_LBUTTONCLICK(seg::toUType(resource::BTN_YES), &MessageDialog::onClickYes, this);
+    SEG_LBUTTONCLICK(seg::toUType(resource::BTN_NO), &MessageDialog::onClickNo, this);
 }
 
 void MessageDialog::onInitialize()
 {
+    setWindowTitle(m_message);
+    setBackgroundColor(seg::ColorCode::black);
+    setWindowHeight(150);
+    setWindowWidth(200);
+
     SEG_Color borderColor{ColorCode::yellow};
     switch (m_kind) {
         case MessageDialogKind::alert:
@@ -40,8 +47,8 @@ void MessageDialog::onInitialize()
 
     t_size begin_y = getWindowHeight() / 2 - 100;
     {
-        StaticLabelBuilder bld(getWindow(), {20, 20}, m_message);
-        bld.id(sdleasygui::toUType(resource::MESSAGEDIALOG_MSG))->
+        StaticLabelBuilder bld(getSEGWindow(), {20, 20}, m_message);
+        bld.id(seg::toUType(resource::MESSAGEDIALOG_MSG))->
                 fontColor(ColorCode::black)->
                 width(240)->
                 height(50)->
@@ -50,23 +57,22 @@ void MessageDialog::onInitialize()
                 borderThick(3)->
                 enabled(true);
 
-        addControll(bld.build());
+        addControl(bld.build());
 
-        auto ctl = getControll<StaticLabel>(resource::MESSAGEDIALOG_MSG);
-        auto renderer = ctl->getSDLRenderer();
-        TextDrawer textDrawer{renderer, ctl->getFont(), ctl->getString()};
+        auto ctl = getControl<StaticLabel>(resource::MESSAGEDIALOG_MSG);
+        auto wh = drawer::getTextSize(ctl->getFont().getTTF_Font(), ctl->getControlText());
 
-        if (textDrawer.getTextWidth() > ctl->getHeight()) {
-            ctl->setWidth(textDrawer.getTextWidth() + 20);
+        if (wh.first > wh.second) {
+            ctl->setWidth(wh.first + 20);
         }
-        if (textDrawer.getTextWidth() > getWindowWidth()) {
-            setWindowWidth(textDrawer.getTextWidth() + 80);
+        if (wh.first > getWindowWidth()) {
+            setWindowWidth(wh.first + 80);
         }
     }
 
     {
-        ButtonBuilder bld(getWindow(), {getWindowWidth() - 120, 70}, "OK");
-        bld.id(sdleasygui::toUType(resource::BTN_OK))->
+        ButtonBuilder bld(getSEGWindow(), {getWindowWidth() - 120, 70}, "OK");
+        bld.id(seg::toUType(resource::BTN_OK))->
                 fontSize(18)->
                 fontColor(ColorCode::black)->
                 width(60)->
@@ -76,7 +82,7 @@ void MessageDialog::onInitialize()
                 borderThick(2)->
                 enabled(true);
 
-        addControll(bld.build());
+        addControl(bld.build());
     }
 
     DisplayInterface::onInitialize();
@@ -84,18 +90,15 @@ void MessageDialog::onInitialize()
 
 void MessageDialog::onClickOk(const void*)
 {
-
-    DisplayInterface::onOK();
+    DisplayInterface::onOk();
 }
 
 void MessageDialog::onClickYes(const void*)
 {
-
-    DisplayInterface::onOK();
+    DisplayInterface::onOk();
 }
 
 void MessageDialog::onClickNo(const void*)
 {
-
-    DisplayInterface::onNO();
+    DisplayInterface::onNo();
 }

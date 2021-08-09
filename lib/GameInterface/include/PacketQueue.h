@@ -2,8 +2,8 @@
 // Created by chaed on 19. 2. 20.
 //
 
-#ifndef TETRIS_FIGURE_CLASS_PACKETQUEUE_H
-#define TETRIS_FIGURE_CLASS_PACKETQUEUE_H
+#ifndef GAMEINTERFACE_PACKETQUEUE_H
+#define GAMEINTERFACE_PACKETQUEUE_H
 
 #if _MSC_VER >= 1200
 #pragma once
@@ -49,6 +49,8 @@ public:
 
     const packet::Packet popEvent();
 
+    bool isEmpty();
+
     inline void end()
     { m_isContinue.exchange(false); }
 
@@ -76,4 +78,4 @@ private:
 };
 
 }
-#endif //TETRIS_FIGURE_CLASS_PACKETQUEUE_H
+#endif //SDL2EASYGUI_PACKETQUEUE_H

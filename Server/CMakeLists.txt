@@ -1,28 +1,31 @@
 cmake_minimum_required(VERSION 3.12)
 project(sdl2_tetris_server)
 
+message("----------------server_module START----------------")
+
 set(CMAKE_CXX_STANDARD 17)
 
-set(Boost_INCLUDE_DIR /usr/include)
-set(BOOST_SOURCE /usr/include)
-set(Boost_LIBRARIES /usr/lib/x86_64-linux-gnu/)
+#set(Boost_INCLUDE_DIR /usr/include)
+#set(BOOST_SOURCE /usr/include)
+#set(Boost_LIBRARIES /usr/lib/x86_64-linux-gnu/)
 
 set(ACE_LINK_FLAGS "${ACE_LINK_FLAGS}" CACHE INTERNAL "ace link flags")
 
-find_package(Boost 1.65.1 REQUIRED COMPONENTS system filesystem serialization)
-find_package(PkgConfig REQUIRED)
+#find_package(Boost 1.65.1 REQUIRED COMPONENTS system filesystem serialization)
+#find_package(PkgConfig REQUIRED)
 
-add_library(boost::serialization INTERFACE IMPORTED)
+#add_library(boost::serialization INTERFACE IMPORTED)
 
-pkg_check_modules(JSONCPP jsoncpp)
+#pkg_check_modules(JSONCPP jsoncpp)
 
 link_libraries(${JSONCPP_LIBRARIES})
 
 ########################################################################
 ##  general find
 
-find_path(ACE_INCLUDE_DIR ace/ACE.h ${CMAKE_SOURCE_DIR}/../ACE_wrappers/ /usr/include /usr/local/include $ENV{ACE_ROOT} $ENV{ACE_ROOT}/include DOC "directory containing ace/*.h for ACE library")
+#find_package(ace CONFIG REQUIRED)
 
+find_path(ACE_INCLUDE_DIR ace/ACE.h ${CMAKE_SOURCE_DIR}/../ACE_wrappers/ /usr/include /usr/local/include $ENV{ACE_ROOT} $ENV{ACE_ROOT}/include DOC "directory containing ace/*.h for ACE library")
 find_library(ACE_LIBRARY NAMES ACE ace PATHS ${CMAKE_SOURCE_DIR}/../ACE_wrappers/lib/ /usr/lib /usr/local/lib $ENV{ACE_ROOT}/lib $ENV{ACE_ROOT} DOC "ACE library file")
 
 ########################################################################

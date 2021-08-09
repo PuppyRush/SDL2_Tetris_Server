@@ -47,7 +47,5 @@ void GameRoomManager::detach(ManagerInterface::unique_type unique)
 
 ManagerInterface::unique_type GameRoomManager::findUser(ManagerInterface::unique_type)
 {
-
-
-
+    return 0;
 }

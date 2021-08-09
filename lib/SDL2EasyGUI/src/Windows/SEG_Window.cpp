@@ -4,9 +4,9 @@
 
 #include <iostream>
 
-#include "SDL2EasyGUI/include/SEG_Window.h"
+#include "include/SEG_Window.h"
 
-using namespace sdleasygui;
+using namespace seg;
 
 SEG_Window::SEG_Window(const t_size width, const t_size height)
         : m_windowHeight(height),
@@ -19,7 +19,7 @@ SEG_Window::SEG_Window(const t_size width, const t_size height)
 
 SEG_Window::~SEG_Window()
 {
-    /*if(m_renderer) {
+    if(m_renderer) {
         SDL_DestroyRenderer(m_renderer);
         m_renderer = nullptr;
     }
@@ -27,15 +27,15 @@ SEG_Window::~SEG_Window()
     if(m_window) {
         SDL_DestroyWindow(m_window);
         m_window = nullptr;
-    }*/
-    /*if(m_window) {
+    }
+    if(m_window) {
         delete m_window;
         m_window = nullptr;
     }
     if(m_renderer) {
         delete m_renderer;
         m_renderer = nullptr;
-    }*/
+    }
 }
 
 void SEG_Window::initialize()
@@ -45,18 +45,32 @@ void SEG_Window::initialize()
     try {
 
         Uint32 show = m_show ? SDL_WINDOW_SHOWN : SDL_WINDOW_HIDDEN;
-        m_window = SDL_CreateWindow(m_title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, m_windowWidth,
+		show |= SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
+
+        if (m_resizable)
+        {
+            show |= SDL_WINDOW_RESIZABLE;
+        }
+        if (m_isBorder)
+        {
+            show |= SDL_WINDOW_BORDERLESS;
+        }
+
+        m_window = SDL_CreateWindow(m_title.c_str(), 
+									SDL_WINDOWPOS_UNDEFINED, 
+									SDL_WINDOWPOS_UNDEFINED, 
+									m_windowWidth,
                                     m_windowHeight,
                                     show);
         m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
         m_windowID = SDL_GetWindowID(m_window);
 
     }
-    catch (runtime_error& e) {
+    catch (std::runtime_error& e) {
         std::cerr << e.what();
     }
     catch (...) {
-        std::cerr << "fail tetris game init because of unkwon error ";
+        std::cerr << "fail tetris game GameInterface_Init because of unkwon error ";
     }
 }
 
@@ -89,3 +103,12 @@ void SEG_Window::hidden()
     SDL_HideWindow(m_window);
 }
 
+void SEG_Window::maximize()
+{
+    SDL_MaximizeWindow(m_window);
+}
+
+void SEG_Window::minimized()
+{
+    SDL_MinimizeWindow(m_window);
+}

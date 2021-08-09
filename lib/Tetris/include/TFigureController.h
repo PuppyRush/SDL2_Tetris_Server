@@ -2,10 +2,8 @@
 // Created by chaed on 19. 2. 4.
 //
 
-#ifndef TETRIS_FIGURE_CLASS_TFIGURECONTROLLER_H
-#define TETRIS_FIGURE_CLASS_TFIGURECONTROLLER_H
-
-#include <boost/serialization/singleton.hpp>
+#ifndef TETRISMODULE_TFIGURECONTROLLER_H
+#define TETRISMODULE_TFIGURECONTROLLER_H
 
 #include "TFigureInterface.h"
 #include "TFigureBoard.h"
@@ -13,8 +11,9 @@
 
 namespace tetris_module {
 
-class TFigureController final
+class TFigureController
 {
+
 public:
 
     using figure_ptr = std::shared_ptr<TFigureInterface>;
@@ -23,7 +22,7 @@ public:
     using nextfigure_board_type = TFigureBoard<NEXTFIGURE_BOARD_WIDTH_COUNT, NEXTFIGURE_BOARD_HEIGHT_COUNT>;
     using nextfigure_board_ptr = std::shared_ptr<nextfigure_board_type>;
 
-    explicit TFigureController(const size_t index);
+    TFigureController();
 
     inline figure_ptr getNextFigure() const noexcept
     { return m_nextFigure; }
@@ -54,17 +53,17 @@ public:
         m_ghostmode = mGhostmode;
     }
 
-    void command(const sdleasygui::t_eventType event);
+    void command(const seg::t_eventType event);
 
     void forceSet(const TFigureInterface* fig);
 
-    void eraseLine(const sdleasygui::t_size lineNumber);
+    void eraseLine(const seg::t_size lineNumber);
 
-    void addLine(const sdleasygui::t_size lineNumber);
+    void addLine(const seg::t_size lineNumber);
 
-    void eraseBottomLine(const sdleasygui::t_size = 1);
+    void eraseBottomLine(const seg::t_size = 1);
 
-    void addBottomLine(const sdleasygui::t_size = 1);
+    void addBottomLine(const seg::t_size = 1);
 
     void createNextFigureRandomly();
 
@@ -76,23 +75,20 @@ private:
     board_ptr m_board;
     nextfigure_board_ptr m_nextFigureBoard;
     bool m_ghostmode = true;
-    const size_t m_index;
 
-    TFigureController() = delete;
+    void _rotate(const seg::t_eventType event);
 
-    void _rotate(const sdleasygui::t_eventType event);
+    void _goDown(const seg::t_eventType event);
 
-    void _goDown(const sdleasygui::t_eventType event);
+    void _goLeft(const seg::t_eventType event);
 
-    void _goLeft(const sdleasygui::t_eventType event);
+    void _goRight(const seg::t_eventType event);
 
-    void _goRight(const sdleasygui::t_eventType event);
-
-    void _goStraightDown(const sdleasygui::t_eventType event);
+    void _goStraightDown(const seg::t_eventType event);
 
     void _set();
 };
 
 }
 
-#endif //TETRIS_FIGURE_CLASS_TFIGURECONTROLLER_H
+#endif //SDL2EASYGUI_TFIGURECONTROLLER_H

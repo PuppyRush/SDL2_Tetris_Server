@@ -2,27 +2,18 @@
 // Created by chaed on 18. 12. 28.
 //
 
-#ifndef CONTROLLER_EDITLABEL_H
-#define CONTROLLER_EDITLABEL_H
+#ifndef SDL2EASYGUI_EDITLABEL_H
+#define SDL2EASYGUI_EDITLABEL_H
 
 #if _MSC_VER >= 1200
 #pragma once
 #endif
 
-#include "SDL2EasyGUI/src/Controller/Label/LabelBasic.h"
-#include "SDL2EasyGUI/include/SEG_Event.h"
+#include "SDL2EasyGUI/src/Control/Label/LabelBasic.h"
+#include "SEG_Event.h"
 
-namespace sdleasygui {
+namespace seg {
 
-typedef struct EditLabelBasic
-{
-    bool canWritable = true;
-    bool canReadable = true;
-    bool isOnlyNumber = false;
-    bool isOnlyString = false;
-    t_size maxlen = 20;
-    std::string editstring;
-} EditLabelBasic;
 
 class EditLabelBuilder;
 
@@ -30,23 +21,17 @@ class EditLabel : public LabelBasic
 {
 
 public:
-    virtual ~EditLabel() = default;
+    using Base = LabelBasic;
+
+    virtual ~EditLabel();
 
     explicit EditLabel(EditLabelBuilder& bld);
 
-    inline void clearString() _GLIBCXX_NOEXCEPT
-    {
-        m_labelString.clear();
-        onDraw();
-    }
-
-    inline const std::string& getString() const _GLIBCXX_NOEXCEPT
-    { return m_labelString; }
-
 protected:
-    virtual void onUserEvent(const SDL_UserEvent* user) override;
+    
+    virtual void onMouseButtonDownEvent(const SDL_MouseButtonEvent* button) override;
 
-    virtual void onKeyboardEvent(const SDL_KeyboardEvent* key);
+    virtual void onKeyboardEvent(const SDL_KeyboardEvent* key) override;
 
     virtual void onTextInputEvent(const SDL_TextInputEvent* text) override;
 
@@ -59,41 +44,39 @@ protected:
     virtual void onTimerEvent(const SDL_UserEvent* user) override;
 
 private:
-    virtual void onAttachFocus();
+    virtual void onAttachFocus(const SDL_UserEvent* user) override;
 
-    virtual void onDetachFocus();
+    virtual void onDetachFocus(const SDL_UserEvent* user) override;
 
-    bool m_textCursor;
-    t_timer m_textCursorTimer = NULL_TIMER_ID;
-    EditLabelBasic m_labelBasic;
-    std::shared_ptr<TimerAdder> m_textCursorTimerAdder;
+    int* m_textWidth = nullptr;
+    int* m_textHeight = nullptr;
+    bool m_drawTextCursor = false;
+    std::shared_ptr<seg::event::SEG_Timer> m_cursorTimer;
 };
 
-class EditLabelBuilder : public BorderBuilder
+class EditLabelBuilder : public LabelBasicBuilder
 {
 public:
 
     EditLabelBuilder(const GraphicInterface::window_type window, const SEG_Point& point, const std::string& str)
-            : BorderBuilder(window, point, str)
+            : LabelBasicBuilder(window, point, str)
     {
     }
 
     EditLabelBuilder(const GraphicInterface::window_type window, SEG_Point&& point, std::string&& str)
-            : BorderBuilder(window, point, str)
+            : LabelBasicBuilder(window, point, str)
     {
     }
 
     virtual ~EditLabelBuilder() = default;
 
-    virtual Controller::controll_ptr build()
+    virtual Control::control_ptr build()
     {
         return new EditLabel(*this);
     }
-
-    EditLabelBasic m_editBasic;
 
 };
 
 }
 
-#endif //TETRIS_FIGURE_CLASS_TEDIT_H
+#endif //SDL2EASYGUI_TEDIT_H

@@ -2,14 +2,14 @@
 // Created by chaed on 19. 2. 19.
 //
 
-#ifndef TETRIS_FIGURE_CLASS_MESSAGETYPE_H
-#define TETRIS_FIGURE_CLASS_MESSAGETYPE_H
+#ifndef GAMEINTERFACE_MESSAGETYPE_H
+#define GAMEINTERFACE_MESSAGETYPE_H
 
 #if _MSC_VER >= 1200
 #pragma once
 #endif
 
-#include "GameInterface/include/Type.h"
+#include "Type.h"
 
 namespace game_interface {
 
@@ -42,10 +42,11 @@ enum class messageInfo : t_type
     WAITINGROOMS_SEND_CHAT,
     WAITINGROOMS_RECV_CHAT,
     GAME_REQUEST_BOARDINFO,
-    GAME_RESPONSE_BOARDINFO
+    GAME_RESPONSE_BOARDINFO,
 
+    DISCONNECT,
 };
 
 }
 
-#endif //TETRIS_FIGURE_CLASS_MESSAGETYPE_H
+#endif //SDL2EASYGUI_MESSAGETYPE_H

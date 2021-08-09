@@ -5,7 +5,8 @@
 #include "SEG_Event.h"
 #include "SEG_Property.h"
 
-namespace sdleasygui {
+namespace seg {
+namespace event {
 
 Uint32 timerCallback(Uint32 interval, void* param)
 {
@@ -13,17 +14,17 @@ Uint32 timerCallback(Uint32 interval, void* param)
     SDL_UserEvent* myevent = reinterpret_cast<SDL_UserEvent*>(param);
 
     SDL_UserEvent userevent;
-    userevent.type = SDL_TIMER_EVENT;
-    userevent.code = myevent->type;
-    userevent.data1 = myevent->data1;
-    userevent.data2 = myevent->data2;
+    userevent = *myevent;
+    userevent.type = SEG_TIMER_EVENT;
 
     SDL_Event event;
-    event.type = SDL_TIMER_EVENT;
+    event.type = SEG_TIMER_EVENT;
     event.user = userevent;
-
+    
     SDL_PushEvent(&event);
     return (interval);
+}
+
 }
 
 }

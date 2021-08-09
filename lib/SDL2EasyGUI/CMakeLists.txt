@@ -1,103 +1,92 @@
 cmake_minimum_required(VERSION 3.12)
 project(SDL2EasyGUI)
 
-SET(CMAKE_EXE_LINKER_FLAGS "-static")
-
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
-
-#set(SDL2_PATH "${PROJECT_SOURCE_DIR}/S9DL")
-
-set(Boost_INCLUDE_DIR /usr/include)
-set(BOOST_SOURCE /usr/include)
-set(Boost_LIBRARIES /usr/lib/x86_64-linux-gnu/)
-set(sdl2gfx /usr/local/lib)
-
-find_package(SDL2 REQUIRED)
-find_package(SDL2_image REQUIRED)
-find_package(SDL2_ttf REQUIRED)
-find_package(Boost 1.65.1 REQUIRED COMPONENTS system filesystem serialization)
-find_package(PkgConfig REQUIRED)
-
-set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
-set(THREADS_PREFER_PTHREAD_FLAG TRUE)
-find_package(Threads REQUIRED)
-if (Threads_FOUND)
-    message("-- OK.")
-else ()
-    message(FATAL_ERROR "Threads not found.")
-endif ()
+message("----------------SDL2EasyGUI START----------------")
 
 
-include_directories(.)
-include_directories(src)
-include_directories(src/Command)
-include_directories(src/Controller)
-include_directories(src/Display)
-include_directories(src/Subjector)
-include_directories(src/Windows)
+find_package(SDL2 CONFIG REQUIRED)
+find_package(sdl2-image CONFIG REQUIRED)
+find_package(sdl2-ttf CONFIG REQUIRED)
+find_package(jsoncpp REQUIRED)
+find_package(Boost 1.17.0)
+find_path(BOOST_INCLUDE_DIR boost)
+
+set(BOOST_INCLUDE_DIR "C:\\Users\\goodd\\source\\repos\\vcpkg-master\\vcpkg-master\\installed\\x64-windows\\include")
+
 
 include_directories(
-        ../
+		.
+		src
         include
-        src
         lib
-        SYSTEM ${Boost_INCLUDE_DIR}
-        ${SDL2_INCLUDE_DIR}
-        ${SDL2_IMAGE_INCLUDE_DIR}
-        ${SDL2_TTF_INCLUDE_DIR}
+        SYSTEM
+		sdl2gfx
+        src/Command 
+        src/Controller
+        src/Display
+        src/Subjector
+        src/Windows
+        ${BOOST_INCLUDE_DIR}
 )
 
-#configure_file("src/" "../SDL2_Tetris_Client/lib/SDL2EasyGUI" COPYONLY)
 
-
-file(COPY DIRECTORY "src/"
-        DESTINATION "include"
-        FILES_MATCHING PATTERN "*.h"
-        )
-
-
-ADD_LIBRARY( SDL2EasyGUI STATIC
-    src/Command/Commander.h
-    src/Command/EventCommand.h
-    src/Controller/Border.cpp
-    src/Controller/Border.h
-        src/Controller/Button/Button.cpp
+ADD_LIBRARY(SDL2EasyGUI STATIC
+        src/Command/Commander.h
+        src/Command/EventCommand.h
+        src/Control/Border.cpp
+        src/Control/Border.h
+        src/Control/Button/Button.cpp
+        src/Control/Button/ButtonBasic.cpp
+        src/Control/Button/ButtonBasic.h
+        src/Control/Box/ComboBox.cpp
+        src/Control/Control.cpp
+        src/Control/Control.h
+        "src/Control/ControlBuilderBase.cpp"
+        src/Control/Label/EditLabel.cpp
+        src/Control/GroupControlManager.cpp
+        src/Control/Box/ListBox.cpp
+        src/Control/Button/RadioButton.cpp
+        src/Control/Label/StaticLabel.cpp
+        src/Control/ImageStatic.cpp
+        src/Control/ImageStatic.h
+        src/Control/Label/LabelBasic.cpp
+        src/Control/Label/LabelBasic.h
+        src/Control/Box/BoxBasic.cpp
+        src/Control/Box/BoxBasic.h
+        src/Control/Button/CheckBox.cpp
+        src/Display/InputDialog.cpp
+        src/Display/MessageDialog.cpp
+        src/Windows/DisplayController.cpp
+        src/Windows/DisplayInterface.cpp
+        src/Windows/EventQueue.cpp
+        src/Windows/GraphicInterface.h
+        src/Windows/SEG_Window.cpp
+        src/Windows/SEG_Event.cpp
+        src/Windows/GraphicInterface.cpp
+        src/Windows/EventListener.h
+        src/Decorator/Decorator.h
+        src/Decorator/ScrollbarDecorator.cpp
+        src/Decorator/ScrollbarDecorator.h
+        src/Decorator/BorderDecorator.h
+        src/Decorator/BorderDecorator.cpp
+        src/Decorator/ScrollrableDecorator.h
+        src/Decorator/ScrollrableDecorator.cpp
         include/Button.h
-        src/Controller/Button/ButtonBasic.cpp
-        src/Controller/Button/ButtonBasic.h
-        src/Controller/Box/ComboBox.cpp
         include/ComboBox.h
-    src/Controller/Controller.cpp
-        src/Controller/Controller.h
-    src/Controller/ControllerBuilder.cpp
-        include/ControllerBuilder.h
-        src/Controller/Label/EditLabel.cpp
+        "include/ControlBuilderBase.h"
         include/EditLabel.h
-    src/Controller/GroupControllManager.cpp
-        include/GroupControllManager.h
-        src/Controller/Box/ListBox.cpp
+        include/GroupControlManager.h
         include/ListBox.h
-        src/Controller/Button/RadioButton.cpp
         include/RadioButton.h
-        src/Controller/Label/StaticLabel.cpp
         include/StaticLabel.h
-    src/Display/InputDialog.cpp
         include/InputDialog.h
-    src/Display/MessageDialog.cpp
         include/MessageDialog.h
-    src/Windows/DisplayController.cpp
         include/DisplayController.h
-    src/Windows/DisplayInterface.cpp
         include/DisplayInterface.h
-        include/EventListener.h
-    src/Windows/EventQueue.cpp
+        
         include/EventQueue.h
-    src/Windows/GraphicInterface.h
-    src/Windows/SEG_Window.cpp
         include/SEG_Window.h
         include/SEG_Constant.h
-    src/Windows/SEG_Event.cpp
         include/SEG_Event.h
         include/SEG_Initiator.h
         include/SEG_Property.h
@@ -107,18 +96,26 @@ ADD_LIBRARY( SDL2EasyGUI STATIC
         include/SEG_Type.h
         include/SEG_TypeTraits.h
         include/SEG_Define.h
-    src/Windows/GraphicInterface.cpp
-    src/Controller/ImageStatic.cpp
-    src/Controller/ImageStatic.h
-        src/Controller/Label/LabelBasic.cpp
-        src/Controller/Label/LabelBasic.h src/Controller/Box/BoxBasic.cpp src/Controller/Box/BoxBasic.h src/Controller/Button/CheckBox.cpp include/CheckBox.h)
+        include/CheckBox.h
+        include/SEG_Drawer.h
+         "src/Decorator/DecoratorInterface.h" "include/SEG_Atomic.h" "include/SEG_Tree.h" "src/SEG_Tree.cpp" "src/GraphicComponent.h" "src/GraphicComponent.cpp")
+
+add_subdirectory(sdl2gfx)
+
 
 target_link_libraries(
-        SDL2EasyGUI
-        ${Boost_PROGRAM_OPTIONS_LIBRARY}
-        ${Boost_LIBRARIES}
-        ${SDL2_IMAGE_LIBRARIES}
-        ${SDL2_TTF_LIBRARIES}
-        ${SDL2_LIBRARY}
-        /usr/local/lib/libSDL2_gfx.a
-        Threads::Threads)
+        ${PROJECT_NAME} PRIVATE  
+		SDL2::SDL2
+		SDL2::SDL2main
+		SDL2::SDL2_image
+		SDL2::SDL2_ttf
+        SDL2_gfx
+ )
+
+ 
+get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+foreach(dir ${dirs})
+  message(STATUS "dir='${dir}'")
+endforeach()
+
+message("----------------SDL2EasyGUI END----------------")

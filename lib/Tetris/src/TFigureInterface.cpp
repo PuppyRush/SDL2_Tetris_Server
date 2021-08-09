@@ -4,9 +4,9 @@
 #include "../include/TFigureBuilder.h"
 #include "GameInterface/include/TypeTraits.h"
 
-using namespace game_interface;
-using namespace sdleasygui;
 using namespace std;
+using namespace game_interface;
+using namespace seg;
 using namespace tetris_module;
 
 TFigureInterface::TFigureInterface()
@@ -33,7 +33,7 @@ TFigureInterface::~TFigureInterface()
 {
 }
 
-std::shared_ptr<TFigureInterface> TFigureInterface::move(const sdleasygui::t_eventType event)
+std::shared_ptr<TFigureInterface> TFigureInterface::move(const seg::t_eventType event)
 {
     auto copied = copy();
 
@@ -179,9 +179,9 @@ TFigureType TFigureInterface::getRandomlyFigureType() const noexcept
     return EnumHelper<TFigureType>::getRandomly(getTypeBegin(), getTypeEnd());
 }
 
-void TFigureInterface::_resetRelateivePoint(const TPoint& newPt)
+void TFigureInterface::_resetRelateivePoint(const SEG_Point& newPt)
 {
-    const auto ptDis = TPoint{newPt.x - getPoint().x, newPt.y - getPoint().y};
+    const auto ptDis = SEG_Point{newPt.x - getPoint().x, newPt.y - getPoint().y};
     for (auto& p : m_relativeCoord) {
         p.set({p.getPoint().x + ptDis.x, p.getPoint().y + ptDis.y});
     }
@@ -191,8 +191,8 @@ void TFigureInterface::fromJson(const Json::Value& json)
 {
     string in = json[getUniqueName().data()].asString();
 
-    this->m_absoluteCoord.x = static_cast<t_coord>(bitset<10>(in.substr(5, 10)).to_ulong());
-    this->m_absoluteCoord.y = static_cast<t_coord>(bitset<20>(in.substr(15, 20)).to_ulong());
+    this->m_absoluteCoord.x = static_cast<seg::t_coord>(bitset<10>(in.substr(5, 10)).to_ulong());
+    this->m_absoluteCoord.y = static_cast<seg::t_coord>(bitset<20>(in.substr(15, 20)).to_ulong());
 
     this->m_figureClass = static_cast<decltype(m_figureClass)>(bitset<3>(in.substr(0, 3)).to_ulong());
     this->m_figureType = static_cast<decltype(m_figureType)>( bitset<2>(in.substr(3, 2)).to_ulong());

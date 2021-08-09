@@ -2,16 +2,16 @@
 // Created by chaed on 18. 12. 27.
 //
 
-#ifndef CONTROLLER_BUTTON_H
-#define CONTROLLER_BUTTON_H
+#ifndef SDL2EASYGUI_BUTTON_H
+#define SDL2EASYGUI_BUTTON_H
 
 #if _MSC_VER >= 1200
 #pragma once
 #endif
 
-#include "SDL2EasyGUI/src/Controller/Button/ButtonBasic.h"
+#include "SDL2EasyGUI/src/Control/Button/ButtonBasic.h"
 
-namespace sdleasygui {
+namespace seg {
 
 class ButtonBuilder;
 
@@ -47,7 +47,7 @@ public:
 
     virtual ~ButtonBuilder() = default;
 
-    virtual Controller::controll_ptr build() final
+    virtual Control::control_ptr build() final
     {
         return new Button(*this);
     }
@@ -56,4 +56,4 @@ public:
 
 }
 
-#endif //TETRIS_FIGURE_CLASS_TBUTTON_H
+#endif //SDL2EASYGUI_TBUTTON_H

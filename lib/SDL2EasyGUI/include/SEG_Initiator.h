@@ -2,23 +2,39 @@
 // Created by chaed on 19. 2. 8.
 //
 
-#ifndef SDLEASYGUIDE_INITIATOR_H
-#define SDLEASYGUIDE_INITIATOR_H
+#ifndef SDL2EASYGUI_INITIATOR_H
+#define SDL2EASYGUI_INITIATOR_H
 
 #include <string>
 #include <memory>
+#include <thread>
 
-#include <SDL.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_video.h>
 
+#include "GameInterface/include/Atomic.h"
+
 #include "DisplayController.h"
 
-namespace sdleasygui {
+#undef main
 
-extern void SDLEasyGUI_Init()
+namespace seg {
+
+static void Start()
+{
+    DisplayController::getInstance().run();
+}
+
+template <typename _Dp>
+static void SetMaindisplay()
+{
+    
+    DisplayController::getInstance().setMainDisplay(make_display<_Dp>());
+}
+
+static void SDLEasyGUI_Init()
 {
 
     if (TTF_Init() != 0) {
@@ -34,9 +50,8 @@ extern void SDLEasyGUI_Init()
     }
     SDL_RegisterEvents(SEG_DRAW_DISPLAY);
 
-    DisplayController::getInstance().run();
 }
 
 }
 
-#endif //TETRIS_FIGURE_CLASS_SDL_INITIATOR_H
+#endif //SDL2EASYGUI_SDL_INITIATOR_H

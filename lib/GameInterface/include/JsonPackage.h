@@ -2,12 +2,14 @@
 // Created by chaed on 19. 4. 17.
 //
 
-#ifndef UICLASSEXAMPLE_JSONPACKAGE_H
-#define UICLASSEXAMPLE_JSONPACKAGE_H
+#ifndef GAMEINTERFACE_JSONPACKAGE_H
+#define GAMEINTERFACE_JSONPACKAGE_H
 
 #if _MSC_VER >= 1200
 #pragma once
 #endif
+
+#include <json/json.h>
 
 namespace game_interface {
 

@@ -1,11 +1,11 @@
 #include <ctime>
 
-#include "GameInterface/include/Object.h"
+#include "Object.h"
 
 using namespace game_interface;
 
 Object::Object()
-        : m_unique(Atomic::newUnique()), m_maketime(std::time(nullptr))
+        : m_unique(atomic::Atomic<Object>::getInstance().newUnique()), m_maketime(std::time(nullptr))
 {
 }
 

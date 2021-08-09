@@ -1,17 +1,20 @@
+//
+// Created by chaed on 19. 2. 4.
+//
 
 #include "Tetris/include/TFigureController.h"
 #include "Tetris/include/TFigureBuilder.h"
 
+
 using namespace std;
-using namespace sdleasygui;
+using namespace seg;
 using namespace tetris_module;
 
-TFigureController::TFigureController(const size_t index)
+TFigureController::TFigureController()
         : m_currentFigure(nullptr),
           m_nextFigure(nullptr),
           m_board(make_shared<board_type>()),
-          m_nextFigureBoard(make_shared<nextfigure_board_type>()),
-          m_index(index)
+          m_nextFigureBoard(make_shared<nextfigure_board_type>())
 {
 
     createNextFigureRandomly();
@@ -23,11 +26,11 @@ TFigureController::TFigureController(const size_t index)
 void TFigureController::createNextFigureRandomly()
 {
     if (m_currentFigure.get() == nullptr) {
-        TFigureBuilder bld{TPoint{GAMEBOARD_WIDTH_COUNT / 2 - 1, 2}};
+        TFigureBuilder bld{SEG_Point{GAMEBOARD_WIDTH_COUNT / 2 - 1, 2}};
         bld.unitType(UnitType::Moving);
         m_currentFigure = bld.build();
 
-        TFigureBuilder bld2{TPoint{1, 2}};
+        TFigureBuilder bld2{SEG_Point{1, 2}};
         bld2.unitType(UnitType::Moving);
         m_nextFigure = bld2.build();
     } else {
@@ -35,10 +38,10 @@ void TFigureController::createNextFigureRandomly()
         m_nextFigureBoard->_eraseCoords(m_nextFigure);
 
         m_currentFigure = m_nextFigure->copy();
-        m_currentFigure->setPoint(TPoint(GAMEBOARD_WIDTH_COUNT / 2 - 1, 2));
+        m_currentFigure->setPoint(SEG_Point(GAMEBOARD_WIDTH_COUNT / 2 - 1, 2));
         m_nextFigure.reset();
 
-        TFigureBuilder bld{TPoint{1, 2}};
+        TFigureBuilder bld{SEG_Point{1, 2}};
         bld.unitType(UnitType::Moving);
         m_nextFigure = bld.build();
     }
@@ -69,7 +72,7 @@ void TFigureController::command(const t_eventType event)
     m_board->setGhostFigure(m_currentFigure, m_ghostFigure);
 }
 
-void TFigureController::_goStraightDown(const sdleasygui::t_eventType event)
+void TFigureController::_goStraightDown(const seg::t_eventType event)
 {
     m_board->_eraseCoords(m_currentFigure);
 
@@ -90,7 +93,7 @@ void TFigureController::_goStraightDown(const sdleasygui::t_eventType event)
     m_board->_setCoords(m_currentFigure);
 }
 
-void TFigureController::_rotate(const sdleasygui::t_eventType event)
+void TFigureController::_rotate(const seg::t_eventType event)
 {
     m_board->_eraseCoords(m_currentFigure);
 
@@ -111,7 +114,7 @@ void TFigureController::_rotate(const sdleasygui::t_eventType event)
     m_board->_setCoords(m_currentFigure);
 }
 
-void TFigureController::_goDown(const sdleasygui::t_eventType event)
+void TFigureController::_goDown(const seg::t_eventType event)
 {
     m_board->_eraseCoords(m_currentFigure);
 
@@ -127,7 +130,7 @@ void TFigureController::_goDown(const sdleasygui::t_eventType event)
     m_board->_setCoords(m_currentFigure);
 }
 
-void TFigureController::_goLeft(const sdleasygui::t_eventType event)
+void TFigureController::_goLeft(const seg::t_eventType event)
 {
     m_board->_eraseCoords(m_currentFigure);
 
@@ -139,7 +142,7 @@ void TFigureController::_goLeft(const sdleasygui::t_eventType event)
     m_board->_setCoords(m_currentFigure);
 }
 
-void TFigureController::_goRight(const sdleasygui::t_eventType event)
+void TFigureController::_goRight(const seg::t_eventType event)
 {
     m_board->_eraseCoords(m_currentFigure);
 

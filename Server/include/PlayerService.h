@@ -39,7 +39,7 @@ public:
 
     virtual int handle_output(ACE_HANDLE fd = ACE_INVALID_HANDLE);
 
-    int send(void* data, ssize_t len) const;
+    int send(void* data, game_interface::t_ssize len) const;
 
     game_interface::t_unique unique;
 

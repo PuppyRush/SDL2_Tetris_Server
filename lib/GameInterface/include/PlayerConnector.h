@@ -2,8 +2,8 @@
 // Created by kim on 19. 1. 10.
 //
 
-#ifndef SDLTETRIS_TCLIENT_TCLIENTCONNECTOR_H
-#define SDLTETRIS_TCLIENT_TCLIENTCONNECTOR_H
+#ifndef GAMEINTERFACE_PLAYERCONNECTOR_H
+#define GAMEINTERFACE_PLAYERCONNECTOR_H
 
 #if _MSC_VER >= 1200
 #pragma once
@@ -16,8 +16,8 @@
 #include  <ace/SOCK_Connector.h>
 #include <ace/Init_ACE.h>
 
-#include  "ClientService.h"
-#include "GameInterface/include/TStruct.h"
+#include  "PlayerService.h"
+#include  "TStruct.h"
 
 namespace game_interface {
 
@@ -25,14 +25,14 @@ class PlayerConnector : public ACE_Event_Handler
 {
 
 public:
-    PlayerConnector(const char* ipstr, ACE_Reactor* reactor, ClientService& stream);
+    PlayerConnector(const char* ipstr, ACE_Reactor* reactor, PlayerService* stream);
 
     virtual ~PlayerConnector(void);
 
     void connect();
 
     inline const bool isConnection() const noexcept
-    { return m_isConnection; }
+    { return m_isConnection = ((m_service->state()==PlayerService::C_SUCCESS) ? 1 : 0); }
 
     virtual ACE_HANDLE get_handle(void) const;
 
@@ -47,11 +47,12 @@ public:
 
 private:
     std::string m_ipstring;
-    int m_isConnection;
+    mutable int m_isConnection;
     ACE_SOCK_Connector m_connector;
-    ClientService& m_stream;
+    PlayerService* m_service;
 };
 
 }
 
 #endif //SIMPLE_ECHOCLIENT_GCONNECTOR_H
+

@@ -11,10 +11,14 @@
 
 #include <string_view>
 #include <limits>
-#include <boost/chrono/ceil.hpp>
+
+//#include <boost/chrono/ceil.hpp>
 
 #include "Configcpp.h"
 #include "Type.h"
+#include <string_view>
+
+#undef max
 
 namespace game_interface {
 
@@ -45,6 +49,6 @@ constexpr const std::string_view NAME_NULL = std::string_view("");
 }
 }
 
-#endif //TETRIS_FIGURE_CLASS_SEG_CONSTANT_H
+#endif //SDL2EASYGUI_SEG_CONSTANT_H
 
 

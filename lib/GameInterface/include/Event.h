@@ -9,16 +9,14 @@
 #pragma once
 #endif
 
-#include <SDL2/SDL_events.h>
-
 namespace game_interface {
 
 enum GAMEINTERFACE_EVENT
 {
-    RECV_DATA = SDL_USEREVENT + 1,
+    RECV_DATA = 100,
     GAMEINTERFACE_EVENT_END
 };
 
 }
 
-#endif //TETRIS_FIGURE_CLASS_EVENT_H
+#endif //SDL2EASYGUI_EVENT_H

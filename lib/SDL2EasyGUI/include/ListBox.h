@@ -2,14 +2,14 @@
 // Created by chaed on 19. 2. 16.
 //
 
-#ifndef TETRIS_FIGURE_CLASS_LIST_H
-#define TETRIS_FIGURE_CLASS_LIST_H
+#ifndef SDL2EASYGUI_LIST_H
+#define SDL2EASYGUI_LIST_H
 
 #include <vector>
 
-#include "SDL2EasyGUI/src/Controller/Box/BoxBasic.h"
+#include "SDL2EasyGUI/src/Control/Box/BoxBasic.h"
 
-namespace sdleasygui {
+namespace seg {
 
 enum class ListBoxTypes : t_type
 {
@@ -27,46 +27,112 @@ enum class ListBoxScrollType : t_type
 
 class ListBoxBuilder;
 
+
+
 class ListBox : public BoxBasic
 {
 public:
+
+    using Base = BoxBasic;
 
     explicit ListBox(ListBoxBuilder& bld);
 
     virtual ~ListBox() = default;
 
-    virtual void onDraw() override;
 
-    virtual void initialize() override
+
+    inline bool isScrollHorizenActivating() const noexcept
     {
-        BoxBasic::initialize();
+        return m_scrollHorizen;
     }
 
+    inline void setScrollHorizenActivating(bool b) noexcept
+    {
+        m_scrollHorizen = b;
+    }
+
+    inline bool isScrollVerticalActivating() const noexcept
+    {
+        return m_scrollVertical;
+    }
+
+    inline void setScrollVerticalActivating(bool b) noexcept
+    {
+        m_scrollVertical = b;
+    }
+
+    void setItemCount(size_t count)
+    {
+        m_itemCount = count;
+    }
+
+    size_t getItemCount() const noexcept
+    {
+        return m_itemCount;
+    }
+
+    virtual void setControlText(const char* ch);
+
+    virtual void setControlText(std::string&& str);
+
+    virtual void setControlText(const std::string& str);
+
+    virtual void initialize();
+
+    virtual void onDraw() override;
+
+    virtual void onMouseMotionEvent(const SDL_MouseMotionEvent* motion) override;
+
+protected:
+
+    virtual t_size _calcIndexOf(const t_coord y) override;
+
+private:
+    bool m_scrollVertical = true;
+    bool m_scrollHorizen = false;
+    size_t m_itemCount = 3;
 };
 
-class ListBoxBuilder : public BorderBuilder
+class ListBoxBuilder : public BoxBasicBuilder
 {
 public:
+
+    friend class ListBox;
 
     virtual ~ListBoxBuilder() = default;
 
     ListBoxBuilder(const GraphicInterface::window_type window, const SEG_Point& point, const std::string& str)
-            : BorderBuilder(window, point, str)
+            : BoxBasicBuilder(window, point, str)
     {
     }
 
     ListBoxBuilder(const GraphicInterface::window_type window, SEG_Point&& point, std::string&& str)
-            : BorderBuilder(window, point, str)
+            : BoxBasicBuilder(window, point, str)
     {
     }
 
-    virtual Controller::controll_ptr build() final
+    ListBoxBuilder* scrollHorizen(bool b)
+    {
+        m_scrollHorizen = b;
+        return this;
+    }
+
+    ListBoxBuilder* scrollVertical(bool b)
+    {
+        m_scrollVertical = b;
+        return this;
+    }
+
+    virtual Control::control_ptr build() final
     {
         return new ListBox(*this);
     }
 
+private:
+    bool m_scrollHorizen = false;
+    bool m_scrollVertical = true;
 };
 
 }
 
-#endif //TETRIS_FIGURE_CLASS_LIST_H
+#endif //SDL2EASYGUI_LIST_H

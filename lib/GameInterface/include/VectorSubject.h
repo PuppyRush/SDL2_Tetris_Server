@@ -2,8 +2,8 @@
 // Created by chaed on 19. 2. 24.
 //
 
-#ifndef SDL2_TETRIS_SERVER_VECTORSUBJECT_H
-#define SDL2_TETRIS_SERVER_VECTORSUBJECT_H
+#ifndef GAMEINTERFACE_VECTORSUBJECT_H
+#define GAMEINTERFACE_VECTORSUBJECT_H
 
 #if _MSC_VER >= 1200
 #pragma once
@@ -12,8 +12,8 @@
 #include <vector>
 #include <algorithm>
 
-#include "GameInterface/include/Subject.h"
-#include "GameInterface/include/Object.h"
+#include "Subject.h"
+#include "Object.h"
 #include "Observer.h"
 
 namespace game_interface {

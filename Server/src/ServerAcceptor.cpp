@@ -4,10 +4,10 @@
 
 #include  <iostream>
 #include  <ace/INET_Addr.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <netdb.h>
+//#include <sys/types.h>
+//#include <sys/socket.h>
+//#include <arpa/inet.h>
+//#include <netdb.h>
 
 #include "GameInterface/include/PacketQueue.h"
 

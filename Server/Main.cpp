@@ -27,7 +27,9 @@ void fn(ACE_Reactor* app)
     app->run_reactor_event_loop();
 }
 
-int main(int argc, char* argv[])
+#undef main
+
+int main(int argc, char** argv)
 {
     using namespace server;
     game_interface::GameInterface_Init(true);

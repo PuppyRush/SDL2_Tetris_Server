@@ -2,8 +2,8 @@
 // Created by chaed on 18. 12. 22.
 //
 
-#ifndef SDLEASYGUIDE_TSTRUCT_H
-#define SDLEASYGUIDE_TSTRUCT_H
+#ifndef SDL2EASYGUI_TSTRUCT_H
+#define SDL2EASYGUI_TSTRUCT_H
 
 #if _MSC_VER >= 1200
 #pragma once
@@ -15,11 +15,18 @@
 #include <iostream>
 
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 
-#include "SEG_Type.h"
+#include "SEG_Constant.h"
 #include "SEG_Property.h"
 
-namespace sdleasygui {
+namespace seg {
+
+typedef struct SEG_Property
+{
+    PropertyChange property;
+    void* param;
+}SEGProperty;
 
 typedef struct DisplayInfo
 {
@@ -58,7 +65,7 @@ public:
             : r(r), g(g), b(b), a(alhpa)
     {
 
-        std::underlying_type<coldeType>::type c;
+        std::underlying_type<coldeType>::type c{ 0 };
         c += r << 16;
         c += g << 8;
         c += b;
@@ -69,8 +76,8 @@ public:
     {
         return
                 this->r == color.r
-                and this->g == color.g
-                and this->b == color.b;
+                && this->g == color.g
+                && this->b == color.b;
     }
 
     const bool compare(const SEG_Color& rhs) const
@@ -78,20 +85,9 @@ public:
         return this->colorCode == rhs.colorCode;
     }
 
-    static SDL_Color getColor(const ColorCode colorCode)
-    {
-        SEG_Color col(colorCode);
-        SDL_Color color{col.r, col.g, col.b, 255};
-        return color;
-    }
 
-    static const SDL_Color getTransparent()
-    {
-        SEG_Color col(ColorCode::white);
-        SDL_Color color{col.r, col.g, col.b, 0};
-        return color;
-    }
 } SEG_Color;
+
 
 typedef struct SEG_Point
 {
@@ -108,59 +104,97 @@ public:
             : x(x), y(y), z(z)
     {}
 
-} TPoint;
+} SEG_Point;
+
+typedef struct SEG_Rect
+{
+public:
+    SEG_Point point{ 0,0 };
+    t_size w;
+    t_size h;
+
+    SEG_Rect()
+        : point({ 0,0 }), w(0), h(0)
+    {}
+
+    SEG_Rect(const SEG_Point p, const t_size w, const t_size h)
+        : point(p), w(w), h(h)
+    {}
+
+    SEG_Rect(const SDL_Rect)
+    {}
+
+} SEG_Rect;
+
 
 typedef struct SEG_TFont
 {
-    std::string font_name;
-    t_size size;
+    std::string fontName = DEFAULT_FONT_NAME;
+    t_size size = 9;
     SEG_Color color;
 
     SEG_TFont() = default;
 
-    SEG_TFont(const std::string& str, const t_size size, const ColorCode color)
-            : font_name(str), size(size), color(color)
+    SEG_TFont(const std::string& fontname, const t_size size, const ColorCode color)
+            : fontName(fontname), size(size), color(color)
     {}
+
+    TTF_Font* getTTF_Font() 
+    {
+        return TTF_OpenFont(fontName.c_str(), size);
+    }
+
 } TFont;
 
-typedef struct ControllerBasic
+//pre declearcation
+class SEG_Window;
+
+typedef struct ControlData
 {
-    t_res resourceId;
-    SEG_Point point = SEG_Point(-100, -100);
+    SEG_Window* window = nullptr;
+
+    //컨트롤의 고유 ID
+    t_id resourceId = NULL_ID;
+    SEG_Point midPoint = SEG_Point{0, 0};
+    SDL_Rect position = SDL_Rect{0, 0};
     t_size depth = 0;
     t_size width = 100;
     t_size height = 50;
-    SEG_TFont font = {"../resources/fonts/OpenSans-Bold.ttf", 24, ColorCode::white};
-    SEG_Color backgroundColor = ColorCode::black;
-    std::string name = "";
+    SEG_TFont font = {"../resources/fonts/OpenSans-Bold.ttf", 24, ColorCode::black};
+    SEG_Color backgroundColor = ColorCode::white;
+    std::string name = "";      //식별이름
+    std::string text = "";      //컨트롤에 출력될 이름
     t_display display = std::numeric_limits<t_display>::max();
     bool enabled = true;
+    bool visible = true;
     bool multiselected = false;
-    ControllerKind kind = ControllerKind::StaticLabel;
-    int group = -1;
     bool carot = false;
     bool autoSize = true;
     bool selected = false;
+    ControlKind kind = ControlKind::StaticLabel;
+    int group = -1;
 
     //border types
     BorderBoundaryLineType borderLineType = BorderBoundaryLineType::straight;
     BorderBoundaryType borderType = BorderBoundaryType::roundedAngle;
     SEG_Color borderColor = ColorCode::white;
-    int borderAngle = 0;
+    int borderAngle = 10;
     int borderThick = 1;
 
-    ControllerBasic() = default;
+    ControlData() = default;
 
-    ControllerBasic(const ControllerBasic& b)
+    ControlData(const ControlData& b)
             : resourceId(b.resourceId),
-              point(b.point),
+              window(b.window),
               width(b.width),
               height(b.height),
               font(b.font),
               backgroundColor(b.backgroundColor),
               name(b.name),
+              text(b.text),
               display(b.display),
               enabled(b.enabled),
+              visible(b.visible),
               multiselected(b.multiselected),
               kind(b.kind),
               group(b.group),
@@ -175,8 +209,8 @@ typedef struct ControllerBasic
               borderColor(b.borderColor)
     {}
 
-} TControllerBasic;
+} TControlData;
 
 }
 
-#endif //TETRIS_FIGURE_CLASS_TSTRUCT_H
+#endif //SDL2EASYGUI_TSTRUCT_H

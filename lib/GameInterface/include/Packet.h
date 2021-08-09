@@ -2,8 +2,8 @@
 // Created by chaed on 19. 2. 19.
 //
 
-#ifndef TETRIS_FIGURE_CLASS_PACKET_H
-#define TETRIS_FIGURE_CLASS_PACKET_H
+#ifndef GAMEINTERFACE_PACKET_H
+#define GAMEINTERFACE_PACKET_H
 
 #if _MSC_VER >= 1200
 #pragma once
@@ -13,9 +13,11 @@
 #include <chrono>
 #include <type_traits>
 #include <string>
-#include <jsoncpp/json/json.h> // or jsoncpp/json.h , or json/json.h etc.
 
-#include "Time.h"
+#include <json/json.h> // or jsoncpp/json.h , or json/json.h etc.
+
+#include "EasyTimer/Times.h"
+
 #include "Constant.h"
 #include "TypeTraits.h"
 #include "Type.h"
@@ -49,7 +51,7 @@ public:
 
     using buffer_type   = unsigned char;
     using buffer_ptr    = buffer_type*;
-    using size_type     = ssize_t;
+    using size_type     = t_ssize;
     using packet_type   = std::pair<buffer_type[BUF_MAX_SIZE], size_type>;
 
     Packet(const Header& _header);
@@ -62,7 +64,7 @@ public:
 
     Packet(const packet_type& _packet);
 
-    Packet(const char*, const size_type);
+    Packet(const char* buf, const size_type size);
 
     friend std::ostream& operator<<(std::ostream& os, const Packet& packet)
     {
@@ -71,13 +73,13 @@ public:
             os << "RECV]";
         else
             os << "SEND]";
-        os   << " destid :"  << packet.getHeader().destId
-             << " / message : " << std::to_string(toUType(packet.getHeader().message))
-             << " / timestamp : " << time::current(packet.getHeader().timestamp) << std::endl;
+        os << " destid :" << packet.getHeader().destId
+            << " / message : " << std::to_string(toUType(packet.getHeader().message))
+             << " / timestamp : " << easytimer::get_time_string(packet.getHeader().timestamp) << std::endl;
         return os;
     }
 
-    std::pair<std::__decay_and_strip<unsigned char (&)[1024]>::__type, long>
+    const std::pair<buffer_type*,long>
     toByte() const;
 
     void appendObject(const game_interface::Object*);
@@ -99,7 +101,7 @@ public:
 
     inline void updateLocale() const
     {
-        m_header.timestamp = time::now();
+        m_header.timestamp = easytimer::now_to_time();
         m_header.where = g_isServer ? messageDirection::SERVER : messageDirection::CLIENT;
     }
 
@@ -123,12 +125,12 @@ private:
 
     inline const bool validObjectLeastOne(const Json::Value& json)
     {
-        return json.isMember("unique") or json.isMember("maketime");
+        return json.isMember("unique") || json.isMember("maketime");
     }
 
     inline const bool validObjectAll(const Json::Value& json)
     {
-        return json.isMember("unique") and json.isMember("maketime");
+        return json.isMember("unique") && json.isMember("maketime");
     }
 
     void toPacket();
@@ -144,4 +146,4 @@ private:
 
 }
 
-#endif //TETRIS_FIGURE_CLASS_PACKET_H
+#endif //SDL2EASYGUI_PACKET_H

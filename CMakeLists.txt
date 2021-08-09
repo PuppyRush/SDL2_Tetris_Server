@@ -1,5 +1,8 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.8)
 project(sdl2_tetris_server)
+
+message("----------------sdl2_tetris_server START----------------")
+
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 20)
@@ -33,6 +36,8 @@ endif ()
 # NOTE: The order matters! The most independent ones should go first.
 include_directories(lib)
 add_subdirectory(lib/GameInterface) # C is a shared library (depends on B and external XXX)
+add_subdirectory(lib/magic_enum)
+add_subdirectory(lib/EasyTimer)
 add_subdirectory(lib/SDL2EasyGUI)
 add_subdirectory(lib/Tetris)
 add_subdirectory(Server) # Executable (depends on A and C)

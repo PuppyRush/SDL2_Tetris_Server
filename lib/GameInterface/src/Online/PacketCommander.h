@@ -2,14 +2,14 @@
 // Created by chaed on 19. 2. 24.
 //
 
-#ifndef SDL2_TETRIS_SERVER_PACKETPROCESSOR_H
-#define SDL2_TETRIS_SERVER_PACKETPROCESSOR_H
+#ifndef GAMEINTERFACE_PACKETPROCESSOR_H
+#define GAMEINTERFACE_PACKETPROCESSOR_H
 
 #if _MSC_VER >= 1200
 #pragma once
 #endif
 
-#include "GameInterface/include/PacketQueue.h"
+#include "PacketQueue.h"
 
 namespace game_interface {
 

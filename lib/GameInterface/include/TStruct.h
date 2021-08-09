@@ -14,8 +14,6 @@
 #include <functional>
 #include <iostream>
 
-#include <SDL2/SDL_image.h>
-
 #include "Type.h"
 
 namespace game_interface {
@@ -57,4 +55,4 @@ typedef struct TIPString
 
 }
 
-#endif //TETRIS_FIGURE_CLASS_TSTRUCT_H
+#endif //SDL2EASYGUI_TSTRUCT_H

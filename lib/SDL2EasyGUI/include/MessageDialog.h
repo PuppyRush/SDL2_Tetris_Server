@@ -2,8 +2,8 @@
 // Created by chaed on 19. 3. 5.
 //
 
-#ifndef TETRIS_FIGURE_CLASS_MESSAGEDIALOG_H
-#define TETRIS_FIGURE_CLASS_MESSAGEDIALOG_H
+#ifndef SDL2EASYGUI_MESSAGEDIALOG_H
+#define SDL2EASYGUI_MESSAGEDIALOG_H
 
 #include <string>
 
@@ -12,7 +12,7 @@
 #include "Button.h"
 #include "SDL2EasyGUI/include/SEG_Property.h"
 
-namespace sdleasygui {
+namespace seg {
 
 class MessageDialog : public DisplayInterface
 {
@@ -23,6 +23,13 @@ public:
 
     virtual ~MessageDialog()
     {}
+
+    virtual const t_id getDisplayId() const noexcept override final
+    {
+        return resource::MESSAGE_DIALOG;
+    }
+
+    virtual std::underlying_type_t<resource> alert() override;
 
     virtual void registerEvent() override;
 
@@ -39,7 +46,7 @@ public:
         DisplayInterface::onClose();
     }
 
-    virtual bool validId(const sdleasygui::t_id id) noexcept
+    virtual bool validId(const seg::t_id id) noexcept
     {
         return getWindowID() == id;
     }
@@ -57,4 +64,4 @@ private:
 };
 }
 
-#endif //TETRIS_FIGURE_CLASS_MESSAGEDIALOG_H
+#endif //SDL2EASYGUI_MESSAGEDIALOG_H

@@ -79,4 +79,5 @@ void WaitingRoomManager::exitUserFromWaitingRoom(_Base::unique_type unique)
 
 ManagerInterface::unique_type WaitingRoomManager::findUser(ManagerInterface::unique_type)
 {
+    return 0;
 }

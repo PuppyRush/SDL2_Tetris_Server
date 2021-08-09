@@ -47,7 +47,7 @@ public:
 
     virtual void detach(ManagerInterface::unique_type) override;
 
-    virtual ManagerInterface::unique_type findUser(ManagerInterface::unique_type) override;
+    virtual ManagerInterface::unique_type findUser(ManagerInterface::unique_type);
 
     static std::shared_ptr<GameRoomManager> getInstance()
     {

@@ -2,8 +2,8 @@
 // Created by chaed on 18. 12. 24.
 //
 
-#ifndef GUI_WINDOW_H
-#define GUI_WINDOW_H
+#ifndef SDL2EASYGUI_WINDOW_H
+#define SDL2EASYGUI_WINDOW_H
 
 #if _MSC_VER >= 1200
 #pragma once
@@ -19,7 +19,7 @@
 #include "SEG_Struct.h"
 #include "SEG_Constant.h"
 
-namespace sdleasygui {
+namespace seg {
 
 class SEG_Window final
 {
@@ -36,40 +36,67 @@ public:
 
     void setTitle(const std::string& title);
 
-    void setWidth(const t_size width) noexcept;
+    void setWidth(t_size width) noexcept;
 
-    void setHeight(const t_size height) noexcept;
+    void setHeight(t_size height) noexcept;
 
-    inline const t_size getWidth() const noexcept
-    { return m_windowWidth; }
+    inline void setShow(bool b) noexcept
+    {
+        m_show = b;
+    }
 
-    inline const t_size getHeight() const noexcept
-    { return m_windowHeight; }
+    inline void setResizable(bool b) noexcept
+    {
+        m_resizable = b;
+        SDL_SetWindowResizable(m_window, b ? SDL_TRUE : SDL_FALSE);
+    }
 
-    inline void setShow(const bool b) noexcept
-    { m_show = b; }
+    inline void setBorder(bool b) noexcept
+    {
+        m_isBorder = b;
+        SDL_SetWindowBordered(m_window, b ? SDL_TRUE : SDL_FALSE);
+    }
 
     void show();
 
     void hidden();
 
+    void maximize();
+
+    void minimized();
+
     void initialize();
 
-    inline const size_t getDisplayWidth() const noexcept
-    { return m_windowWidth; }
 
-    inline const size_t getDisplayHeight() const noexcept
-    { return m_windowHeight; }
+    inline bool getResizable() const noexcept
+    {
+        return m_windowWidth;
+    }
 
-    inline const t_id getWindowID() const noexcept
+    inline bool getBorder() const noexcept
+    {
+        return m_isBorder;
+    }
+
+    inline t_size getWidth() const noexcept
+    {
+        return m_windowWidth;
+    }
+
+    inline t_size getHeight() const noexcept
+    {
+        return m_windowHeight;
+    }
+
+    inline t_id getWindowID() const noexcept
     { return m_windowID; }
 
-    inline window_type getSDLWindow() const noexcept
+    inline window_type getWindow() const noexcept
     {
         return m_window;
     }
 
-    inline renderer_type getSDLRenderer() const noexcept
+    inline renderer_type getRenderer() const noexcept
     {
         return m_renderer;
     }
@@ -84,8 +111,10 @@ private:
     std::string m_title;
     t_id m_windowID = NULL_WINDOW_ID;
     bool m_show = false;
+    bool m_isBorder = true;
+    bool m_resizable = false;
 };
 
 }
 
-#endif //TETRIS_FIGURE_CLASS_TWINDOW_H
+#endif //SDL2EASYGUI_TWINDOW_H

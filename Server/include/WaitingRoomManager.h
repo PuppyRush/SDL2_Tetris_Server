@@ -50,7 +50,7 @@ public:
 
     virtual void detach(ManagerInterface::unique_type) override;
 
-    virtual ManagerInterface::unique_type findUser(ManagerInterface::unique_type) override;
+    virtual ManagerInterface::unique_type findUser(ManagerInterface::unique_type);
 
     void exitUserFromWaitingRoom(_Base::unique_type unique);
 

@@ -2,8 +2,8 @@
 // Created by chaed on 18. 11. 24.
 //
 
-#ifndef TERIS_FIGURE_CLASS_FIGUREBOARD_H
-#define TERIS_FIGURE_CLASS_FIGUREBOARD_H
+#ifndef TETRISMODULE_FIGUREBOARD_H
+#define TETRISMODULE_FIGUREBOARD_H
 
 #if _MSC_VER >= 1200
 #pragma once
@@ -33,6 +33,7 @@ public:
     using board_type = std::array<std::array<TFigureUnit, WIDTH>, HEIGHT>;
 
     TFigureBoard()
+            : m_backgroundColor(seg::ColorCode::white)
     {
         clear();
     }
@@ -44,22 +45,22 @@ public:
         return m_board;
     }
 
-    inline const sdleasygui::TPoint& getStartDisplayPoint() const
+    inline const seg::SEG_Point& getStartDisplayPoint() const
     {
         return m_startGameDisplayPoint;
     }
 
-    inline void setStartDisplayPoint(const sdleasygui::TPoint& m_StartDisplayPoint)
+    inline void setStartDisplayPoint(const seg::SEG_Point& m_StartDisplayPoint)
     {
         TFigureBoard::m_startGameDisplayPoint = m_StartDisplayPoint;
     }
 
-    inline const sdleasygui::t_size getblockLength() const
+    inline const seg::t_size getblockLength() const
     {
         return m_gameblockLength;
     }
 
-    inline void setblockLength(sdleasygui::t_size m_blockLength)
+    inline void setblockLength(seg::t_size m_blockLength)
     {
         TFigureBoard::m_gameblockLength = m_blockLength;
     }
@@ -68,7 +69,7 @@ public:
     {
         dest = src->copy();
         dest->setAll(UnitType::Ghost);
-        dest->setAll(sdleasygui::SEG_Color{sdleasygui::ColorCode::silver, 64});
+        dest->setAll(seg::SEG_Color{seg::ColorCode::silver, 64});
 
         _eraseCoords(dest);
 
@@ -122,8 +123,8 @@ public:
 
     bool _eraseLinesIfFillLineThenCollapse()
     {
-        std::set<sdleasygui::t_coord, std::greater<sdleasygui::t_coord>> collapedLines;
-        for (sdleasygui::t_coord y = GAMEBOARD_HEIGHT_COUNT - 1; y >= 0; --y) {
+        std::set<seg::t_coord, std::greater<seg::t_coord>> collapedLines;
+        for (seg::t_coord y = GAMEBOARD_HEIGHT_COUNT - 1; y >= 0; --y) {
             int x = 0;
             for (; x < GAMEBOARD_WIDTH_COUNT; ++x) {
                 if ((m_board[y][x].getType() & UnitType::Fixed) != UnitType::Fixed) {
@@ -142,8 +143,8 @@ public:
             return false;
         }
 
-        for (sdleasygui::t_coord x = 0; x < GAMEBOARD_WIDTH_COUNT; ++x) {
-            for (sdleasygui::t_coord y = GAMEBOARD_HEIGHT_COUNT - 1; y >= 0; --y) {
+        for (seg::t_coord x = 0; x < GAMEBOARD_WIDTH_COUNT; ++x) {
+            for (seg::t_coord y = GAMEBOARD_HEIGHT_COUNT - 1; y >= 0; --y) {
                 if ((m_board[y][x].getType() & UnitType::Fixed) == UnitType::Fixed) {
                     const size_t removedCnt = std::count_if(collapedLines.begin(), collapedLines.end(),
                                                             [y](const auto _y) {
@@ -154,7 +155,7 @@ public:
                         m_board[y + removedCnt][x].set(UnitType::Fixed);
                         m_board[y + removedCnt][x].set(m_board[y][x].getColor());
                         m_board[y][x].set(static_cast<UnitType>(UnitType::Empty));
-                        m_board[y][x].set(sdleasygui::ColorCode::none);
+                        m_board[y][x].set(seg::ColorCode::none);
                     }
                 }
             }
@@ -183,35 +184,22 @@ public:
         for (int i = 0; i < m_board.size(); i++) {
             auto board = m_board[i];
             for (int l = 0; l < board.size(); l++) {
-                board[l] = TFigureUnit{sdleasygui::TPoint(i, l), 0, sdleasygui::ColorCode::none, UnitType::Empty};
+                board[l] = TFigureUnit{seg::SEG_Point(i, l), 0, seg::ColorCode::none, UnitType::Empty};
             }
         }
     }
 
+    inline seg::SEG_Color getBackgroundColor()
+    { return m_backgroundColor; }
+
 private:
 
-    sdleasygui::TPoint m_startGameDisplayPoint;
-    sdleasygui::t_size m_gameblockLength;
+    seg::SEG_Point m_startGameDisplayPoint;
+    seg::t_size m_gameblockLength;
+    seg::SEG_Color m_backgroundColor;
 
     board_type m_board;
 };
-/*
-class make_redrawer {
-
-public:
-    TFigureBoard& m_board;
-
-    make_redrawer(TFigureBoard& board)
-    :m_board(board)
-    {
-        board._setCoords();
-    }
-
-    ~make_redrawer()
-    {
-        m_board._eraseCoords();
-    }
-};*/
 
 }
 

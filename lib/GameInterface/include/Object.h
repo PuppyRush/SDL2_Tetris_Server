@@ -1,6 +1,6 @@
 
-#ifndef OBJECT_OBJECT_H
-#define OBJECT_OBJECT_H
+#ifndef GAMEINTERFACE_OBJECT_H
+#define GAMEINTERFACE_OBJECT_H
 
 #if _MSC_VER >= 1200
 #pragma once
@@ -9,12 +9,11 @@
 #include <string_view>
 #include <memory>
 
-#include <jsoncpp/json/json.h>
 
 #include "Atomic.h"
 #include "Constant.h"
 #include "Type.h"
-#include "GameInterface/include/JsonPackage.h"
+#include "JsonPackage.h"
 
 namespace game_interface {
 

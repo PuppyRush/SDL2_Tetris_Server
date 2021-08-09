@@ -2,8 +2,8 @@
 // Created by chaed on 19. 2. 13.
 //
 
-#ifndef TETRIS_FIGURE_CLASS_EVENTQUEUE_H
-#define TETRIS_FIGURE_CLASS_EVENTQUEUE_H
+#ifndef SDL2EASYGUI_EVENTQUEUE_H
+#define SDL2EASYGUI_EVENTQUEUE_H
 
 #include <queue>
 #include <condition_variable>
@@ -13,7 +13,7 @@
 
 #include "SDL2EasyGUI/include/SEG_Type.h"
 
-namespace sdleasygui {
+namespace seg {
 
 struct event_mover
 {
@@ -43,10 +43,10 @@ class EventQueue
 
 public:
 
-    using data_type = _Data*;
+    using data_type = _Data;
 
     EventQueue()
-            : m_isContinue(true)
+        : m_isContinue(true)
     {
 
     }
@@ -59,7 +59,6 @@ public:
         while (!m_eventQ.empty()) {
             auto e = m_eventQ.front();
             m_eventQ.pop();
-            //delete e;
         }
     }
 
@@ -67,7 +66,7 @@ public:
     {
         std::lock_guard<std::mutex> lock(m_mutex);
         m_eventQ.push(event);
-        printf("push seq : %llu\n", m_seq);
+       // printf("push seq : %lu\n", m_seq);
         m_cond.notify_one();
     }
 
@@ -77,13 +76,19 @@ public:
         m_cond.wait(lock, [=]() { return !m_eventQ.empty() || !m_isContinue; });
 
         if (m_eventQ.empty() || !m_isContinue) {
-            return new _Data;
+            return data_type();
         }
 
         const auto msg = m_eventQ.front();
         m_eventQ.pop();
-        printf("pop seq : %llu\n", m_seq++);
+       // printf("pop seq : %lu\n", m_seq++);
         return msg;
+    }
+
+    bool isEmpty()
+    {
+        std::unique_lock<std::mutex> lock(m_mutex);
+        return m_eventQ.empty();
     }
 
     static std::uint64_t m_seq;
@@ -100,4 +105,4 @@ std::uint64_t EventQueue<_Data>::m_seq = 0;
 
 }
 
-#endif //TETRIS_FIGURE_CLASS_EVENTQUEUE_H
+#endif //SDL2EASYGUI_EVENTQUEUE_H

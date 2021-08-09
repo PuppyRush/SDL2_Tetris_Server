@@ -2,8 +2,8 @@
 // Created by chaed on 19. 2. 8.
 //
 
-#ifndef TETRIS_FIGURE_CLASS_GAMEROOM_H
-#define TETRIS_FIGURE_CLASS_GAMEROOM_H
+#ifndef GAMEINTERFACE_GAMEROOM_H
+#define GAMEINTERFACE_GAMEROOM_H
 
 #if _MSC_VER >= 1200
 #pragma once
@@ -27,6 +27,8 @@ public:
 
 protected:
 
+    explicit GameRoom() = default;
+
     virtual void postEnter(const player_ptr&) = 0;
 
     virtual void postExit(const player_ptr&) = 0;
@@ -34,4 +36,4 @@ protected:
 };
 
 }
-#endif //TETRIS_FIGURE_CLASS_GAMEROOM_H
+#endif //SDL2EASYGUI_GAMEROOM_H

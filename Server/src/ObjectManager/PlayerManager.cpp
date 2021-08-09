@@ -50,5 +50,5 @@ void PlayerManager::detach(ManagerInterface::unique_type unique)
 
 ManagerInterface::unique_type PlayerManager::findUser(ManagerInterface::unique_type)
 {
-
+    return 0;
 }

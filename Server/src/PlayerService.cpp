@@ -20,6 +20,7 @@
 #include "../include/ConnectingPlayerQueue.h"
 
 using namespace server;
+using namespace game_interface;
 using namespace game_interface::packet;
 
 PlayerService::PlayerService(ACE_SOCK_Acceptor& acceptor, ACE_Reactor* reactor)
@@ -56,7 +57,7 @@ PlayerService::handle_input(ACE_HANDLE fd/* = ACE_INVALID_HANDLE*/)
 
     ACE_Time_Value vt(0, 0);
 
-    ssize_t len = this->peer_.recv(in, BUF, &vt);
+    const t_ssize len = this->peer_.recv(in, BUF, &vt);
     if (len <= 0) {//클라이언트  종료. 통신  에러
         return -1;
     }
@@ -68,13 +69,13 @@ PlayerService::handle_input(ACE_HANDLE fd/* = ACE_INVALID_HANDLE*/)
 
     this->reactor()->register_handler(this, ACE_Event_Handler::WRITE_MASK);
 
-    Packet p{in, len};
+    Packet p{in, static_cast<game_interface::t_ssize>(len)};
     game_interface::PacketQueue::getInstance().pushEvent(p);
     return 0;
 }
 
 int
-PlayerService::send(void* data, ssize_t len) const
+PlayerService::send(void* data, t_ssize len) const
 {
     peer_.send(data, len);
     return 0;
@@ -88,7 +89,7 @@ PlayerService::handle_output(ACE_HANDLE fd/* = ACE_INVALID_HANDLE*/)
     do {
         this->send_datas_.dequeue_head(mb, &rt);
 
-        ssize_t len = this->peer_.send(mb->rd_ptr(), mb->length(), &rt);
+        t_ssize len = this->peer_.send(mb->rd_ptr(), mb->length(), &rt);
         if (len < 0) {//통신  에러
             mb->release();
             return -1;

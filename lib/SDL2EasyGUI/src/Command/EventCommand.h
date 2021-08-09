@@ -2,12 +2,18 @@
 // Created by chaed on 19. 2. 14.
 //
 
-#ifndef TETRIS_FIGURE_CLASS_EVENTCOMMAND_H
-#define TETRIS_FIGURE_CLASS_EVENTCOMMAND_H
+#ifndef SDL2EASYGUI_EVENTCOMMAND_H
+#define SDL2EASYGUI_EVENTCOMMAND_H
+
+#if _MSC_VER >= 1200
+#pragma once
+#endif
+
 
 #include "Commander.h"
 
-namespace sdleasygui {
+
+namespace seg {
 
 class EventCommand : public Commander
 {
@@ -21,4 +27,4 @@ class EventCommand : public Commander
 
 }
 
-#endif //TETRIS_FIGURE_CLASS_EVENTCOMMAND_H
+#endif //SDL2EASYGUI_EVENTCOMMAND_H
