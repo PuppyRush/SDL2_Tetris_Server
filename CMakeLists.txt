@@ -4,12 +4,50 @@ project(sdl2_tetris_server)
 message("----------------sdl2_tetris_server START----------------")
 
 
+#pre out cmake var
+message("CMAKE_SYSTEM_PROCESSOR: " ${CMAKE_SYSTEM_PROCESSOR} )
+message("CMAKE_SYSTEM_NAME : " ${CMAKE_SYSTEM_NAME})
+message("VCPKG_ROOT " $ENV{VCPKG_ROOT})
+
+find_path(BOOST_INCLUDE_DIR boost)
+include_directories(${BOOST_INCLUDE_DIR})
+
+
+
+#set enviroment var
+if(CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)")
+	if(CMAKE_SYSTEM_NAME MATCHES "Windows")
+		set(PLATFORM "x86-windows")
+	endif()
+elseif(CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "(amd64)|(AMD64)")
+	if(CMAKE_SYSTEM_NAME MATCHES "Windows")
+		set(PLATFORM "x64-windows")
+	endif()
+endif()
+
+set(CMAKE_BUILD_TYPE "debug")
+set(VCPKG_PLATFORM $ENV{VCPKG_ROOT}\\installed\\${PLATFORM})
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_DEBUG")
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_REQUIRED_FLAGS -std=c++2a)
+set(BOOST_LIBRARY_DIRS ${VCPKG_PLATFORM}\\lib)
+set(BOOST_INCLUDE_DIR ${VCPKG_PLATFORM}\\include)
+
+#post out cmake var
+message("CMAKE_CXX_FLAGS : " ${CMAKE_CXX_FLAGS})
+message("VCPKG_PLATFORM : " ${VCPKG_PLATFORM})
+message("PLATFORM : " ${PLATFORM})
+message("MSVC_VERSION : " ${MSVC_VERSION})
 
 
-set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
+if (MSVC_VERSION GREATER_EQUAL "1900")
+    include(CheckCXXCompilerFlag)
+    CHECK_CXX_COMPILER_FLAG("/std:c++latest" _cpp_latest_flag_supported)
+    if (_cpp_latest_flag_supported)
+        add_compile_options("/std:c++latest")
+        message("CMAKE_CXX_COMPILER_VERSION :" ${CMAKE_CXX_COMPILER_VERSION} )
+    endif()
+endif()
+
 
 # You can tweak some common (for all subprojects) stuff here. For example:
 
@@ -17,20 +55,22 @@ set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 set(CMAKE_DISABLE_SOURCE_CHANGES  ON)
 
 if ("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
-    message(SEND_ERROR "In-source builds are not allowed.")
+    message("In-source builds are not allowed.")
 endif ()
 
-set(BUILD_SHARED_LIBS ON)
+#set(BUILD_SHARED_LIBS ON)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_COLOR_MAKEFILE   ON)
 
-set(CMAKE_BUILD_TYPE=Debug /home/chaed/projects/SDL2_Tetris_Server/cmake-build-debug)
-SET(CMAKE_DEBUG_POSTFIX "_d" CACHE STRING "postfix applied to debug build of libraries")
+set(CMAKE_BUILD_TYPE=Debug ./cmake-build-debug)
+#set(CMAKE_DEBUG_POSTFIX "d" CACHE STRING "postfix applied to debug build of libraries")
 
 # Remove 'lib' prefix for shared libraries on Windows
 if (WIN32)
-    set(CMAKE_SHARED_LIBRARY_PREFIX "")
+    set(CMAKE_SHARED_LIBRARY_RepEFIX "")
 endif ()
+
+
 
 # When done tweaking common stuff, configure the components (subprojects).
 # NOTE: The order matters! The most independent ones should go first.
