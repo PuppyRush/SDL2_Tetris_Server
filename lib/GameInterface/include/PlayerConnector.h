@@ -34,16 +34,15 @@ public:
     inline const bool isConnection() const noexcept
     { return m_isConnection = ((m_service->state()==PlayerService::C_SUCCESS) ? 1 : 0); }
 
-    virtual ACE_HANDLE get_handle(void) const;
+    virtual ACE_HANDLE get_handle(void) const override;
 
-    //접속  이벤트
-    virtual int handle_input(ACE_HANDLE fd = ACE_INVALID_HANDLE);
+    virtual int handle_input(ACE_HANDLE fd = ACE_INVALID_HANDLE) override;
 
-    virtual int handle_output(ACE_HANDLE fd = ACE_INVALID_HANDLE);
+    virtual int handle_output(ACE_HANDLE fd = ACE_INVALID_HANDLE) override;
 
-    virtual int handle_exception(ACE_HANDLE fd = ACE_INVALID_HANDLE);
+    virtual int handle_exception(ACE_HANDLE fd = ACE_INVALID_HANDLE) override;
 
-    virtual int handle_close(ACE_HANDLE handle, ACE_Reactor_Mask close_mask);
+    virtual int handle_close(ACE_HANDLE handle, ACE_Reactor_Mask close_mask) override;
 
 private:
     std::string m_ipstring;

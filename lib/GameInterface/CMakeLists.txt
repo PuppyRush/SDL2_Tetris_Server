@@ -70,7 +70,7 @@ ADD_LIBRARY(GameInterface STATIC
 
 target_link_libraries(
         ${PROJECT_NAME}
-		PRIVATE jsoncpp_lib
+		PRIVATE jsoncpp_lib jsoncpp_object
         ${BOOST_LIBRARIES}
         ${ACE_LIBRARY}
 		)

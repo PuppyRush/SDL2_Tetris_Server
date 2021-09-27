@@ -19,7 +19,7 @@ private:
     ACE_SOCK_Acceptor acceptor_;
 
 public:
-    ServerAcceptor(const char* ipstr, ACE_Reactor* reactor);
+    ServerAcceptor(std::string ip, ACE_Reactor* reactor);
 
     ~ServerAcceptor(void);
 

@@ -38,14 +38,17 @@ typedef struct TIPString
         ip.pop_back();
     }
 
-    const char* strFromIP() const
+    std::string operator*() const
     {
-        return ip.c_str();
+        return ip;
     }
 
-    const char* strFromIpAndPort() const
+    std::string getIpAndPortString() const
     {
-        return ip.c_str();
+        std::string ipAndport{ ip };
+        ipAndport.append(":");
+        ipAndport.append(std::to_string(port));
+        return ipAndport;
     }
 
     std::string ip;

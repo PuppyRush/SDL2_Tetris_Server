@@ -19,19 +19,19 @@
 
 using namespace server;
 
-ServerAcceptor::ServerAcceptor(const char* ipstr, ACE_Reactor* reactor)
+ServerAcceptor::ServerAcceptor(std::string ip, ACE_Reactor* reactor)
         : ACE_Event_Handler(reactor)
 {
-    ACE_INET_Addr addr(ipstr);
+    ACE_INET_Addr addr(ip.c_str());
 
     int bret = acceptor_.open(addr, 1);
     if (-1 == bret) {
-        std::cout << std::endl << "Listen fail:" << ipstr << std::endl;
+        std::cout << std::endl << "Listen fail:" << ip << std::endl;
         delete this;
         return;
     }
 
-    std::cout << std::endl << "Server start:" << ipstr << std::endl;
+    std::cout << std::endl << "Server start:" << ip << std::endl;
 
     this->reactor()->register_handler(this, ACE_Event_Handler::ACCEPT_MASK);
 }

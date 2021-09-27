@@ -14,7 +14,7 @@ void WaitingRoom::updateObserver(const Packet&)
 
 void WaitingRoom::exit(const unique_type unique)
 {
-    getGameroom(unique);
+    //getGameroom(unique);
 
 
     Room::exit(unique);
