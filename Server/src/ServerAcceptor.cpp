@@ -10,6 +10,7 @@
 //#include <netdb.h>
 
 #include "GameInterface/include/PacketQueue.h"
+#include "GameInterface/include/Logger.h"
 
 #include "../include/ServerAcceptor.h"
 #include "../include/PlayerService.h"
@@ -18,6 +19,7 @@
 #include "../include/WaitingRoomManager.h"
 
 using namespace server;
+using namespace game_interface::logger;
 
 ServerAcceptor::ServerAcceptor(std::string ip, ACE_Reactor* reactor)
         : ACE_Event_Handler(reactor)
@@ -26,12 +28,19 @@ ServerAcceptor::ServerAcceptor(std::string ip, ACE_Reactor* reactor)
 
     int bret = acceptor_.open(addr, 1);
     if (-1 == bret) {
-        std::cout << std::endl << "Listen fail:" << ip << std::endl;
+        std::string str;
+        str.append("[ServerAcceptor::ServerAcceptor] Listen Fail ");
+        Logger::getInstance().printLog(str, Logger::logger_level::Error);
+
+        Logger::getInstance().printLog("Listen fail:", Logger::logger_level::Error);
         delete this;
         return;
     }
 
-    std::cout << std::endl << "Server start:" << ip << std::endl;
+    std::string str;
+    str.append("[ServerAcceptor::ServerAcceptor] Server start IP : ");
+    str.append(ip);
+    Logger::getInstance().printLog(str, Logger::logger_level::Info);
 
     this->reactor()->register_handler(this, ACE_Event_Handler::ACCEPT_MASK);
 }

@@ -14,6 +14,7 @@
 #include  <ace/OS.h>
 
 #include "GameInterface/include/PacketQueue.h"
+#include "GameInterface/include/Logger.h"
 
 #include "../include/PlayerService.h"
 #include "../include/PlayerManager.h"
@@ -22,6 +23,7 @@
 using namespace server;
 using namespace game_interface;
 using namespace game_interface::packet;
+using namespace game_interface::logger;
 
 PlayerService::PlayerService(ACE_SOCK_Acceptor& acceptor, ACE_Reactor* reactor)
         : ACE_Event_Handler(reactor), peer_(ACE_INVALID_HANDLE)
@@ -33,6 +35,12 @@ PlayerService::PlayerService(ACE_SOCK_Acceptor& acceptor, ACE_Reactor* reactor)
 
     char addr_string[256];
     addr_.addr_to_string(addr_string, 256);
+
+    std::string str;
+    str.append("[PlayerService::PlayerService] Enter Client address : ");
+    str.append(addr_string);
+    Logger::getInstance().printLog(str, Logger::logger_level::Info);
+
     std::cout << std::endl << "Enter Client:" << addr_string << std::endl;
 
     this->reactor()->register_handler(this, ACE_Event_Handler::READ_MASK);
@@ -110,24 +118,34 @@ PlayerService::handle_output(ACE_HANDLE fd/* = ACE_INVALID_HANDLE*/)
     return 0;
 }
 
-int
-PlayerService::handle_close(ACE_HANDLE handle, ACE_Reactor_Mask close_mask)
+int PlayerService::handle_close(ACE_HANDLE handle, ACE_Reactor_Mask close_mask)
 {
     char addr_string[256];
     addr_.addr_to_string(addr_string, 256);
-    std::cout << std::endl << "Exit Client:" << addr_string << std::endl;
+
 
     ACE_Reactor_Mask m = ACE_Event_Handler::ALL_EVENTS_MASK | ACE_Event_Handler::DONT_CALL;
     this->reactor()->remove_handler(this, m);
     this->send_datas_.flush();
     this->peer_.close();
 
+    std::string str;
+    str.append("[PlayerService::handle_close] Exit Client address : ");
+    str.append(addr_string);
+
     if (ConnectingPlayerQueue::getInstance()->exist(unique)) {
         ConnectingPlayerQueue::getInstance()->detach(unique);
     }
     if (PlayerManager::getInstance()->exist(unique)) {
+        auto player = PlayerManager::getInstance()->at(unique);
         PlayerManager::getInstance()->detach(unique);
+                
+        str.append(" UserName : ").append(player->getUniqueName());
+        str.append(" Unique : ").append(std::to_string(player->getUnique()));
     }
+
+    Logger::getInstance().printLog(str, Logger::logger_level::Info);
+
 
     //delete  this;
     return 0;
